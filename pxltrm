@@ -48,9 +48,6 @@ cursor() {
         d): "\\e[38;5;${color}m█\\e[1D" ;;
         e): "\\e[38;5;0m█\\e[1D" ;;
 
-        # Background Color.
-        i): "\\033]11;#ff0000\\033\\007" ;;
-
         # Other.
         *) return ;;
     esac
