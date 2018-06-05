@@ -9,7 +9,7 @@ unset PATH
 LC_ALL=C
 LANG=C
 
-brushes=("█" "██" "x" "+")
+brushes=("█" "██" "░" "▒" "▓")
 
 
 get_term_size() {
@@ -21,6 +21,14 @@ clear_screen() {
     printf '\e[2J\e[1;1H\e[0m\n\n'
 }
 
+print_palette() {
+    for i in {1..8}; do
+        ((i==color)) && block_char="▃" || block_char=" "
+        ((i>7)) && i="8;5;$i"
+        status+="\\e[4${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
+    done
+}
+
 status_line() {
     local status block_char
 
@@ -28,18 +36,16 @@ status_line() {
     printf -v block_width "%$(("${columns:=80}" / 16))s" ""
     printf -v padding "%$((columns / 4))s" ""
 
-    for i in {1..8}; do
-        ((i==color)) && block_char="▃" || block_char=" "
-        ((i>7)) && i="8;5;$i"
-        status+="\\e[4${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
-    done
+    print_palette
 
     printf '\e[s\e[0;0H'
-    printf '\e[0m%s' "colors: [0-8] - [d]raw - [e]rase - [c]lear - [b]rush"
+    printf '\e[0m%s' "colors: [0-8] - [d]raw - [e]rase - [c]lear"
     printf '%b' "\\e[${lines};0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
-    printf '%b' "\\e[${lines};0Hbrush: ${brush_char:=█}"
+    printf '%b' "\\e[${lines};0H[b]rush: ${brush_char:=█}"
     printf '\e[u'
+
+    unset status
 }
 
 status_line_clean() {
@@ -47,8 +53,6 @@ status_line_clean() {
 }
 
 cursor() {
-    : "${1: -1}"
-
     case "${1: -1}" in
         # Cursor Movement.
         A|k): '\e[1A' ;;
