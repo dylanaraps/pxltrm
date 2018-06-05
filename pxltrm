@@ -2,10 +2,6 @@
 #
 # A pixel art editor for the terminal.
 
-# We don't need unicode (we sorta do).
-LC_ALL=C
-LANG=C
-
 brushes=("█" "██" "░" "▒" "▓")
 
 
