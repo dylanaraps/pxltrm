@@ -20,9 +20,9 @@ status_line() {
     local status block_char
 
     # Generate block width based on terminal width.
-    printf -v block_width "%$(("${1:-80}" / 8))s" ""
+    printf -v block_width "%$(("${1:-80}" / 9))s" ""
 
-    for i in {1..8}; do
+    for i in {0..8}; do
         ((i==$2)) && block_char="▃" || block_char=" "
         ((i>7)) && i="8;5;$i"
         status+="\\e[4${i}m\\e[37m${block_width// /${block_char}}\\e[0m"
@@ -49,11 +49,14 @@ cursor() {
         D|h): '\e[1D' ;;
 
         # Color Selection.
-        [1-8]) color="${1: -1}" ;;
+        [0-8]) color="${1: -1}" ;;
 
         # Drawing Cells.
         d): "\\e[38;5;${color}m█\\e[1D" ;;
         e): "\\e[38;5;0m█\\e[1D" ;;
+
+        # Background Color.
+        i): '\033]11;#ff0000\007' ;;
 
         # Other.
         *) return ;;
