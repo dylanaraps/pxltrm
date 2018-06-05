@@ -25,7 +25,7 @@ status_line() {
     done
 
     printf '\e[s\e[0;0H'
-    printf "%b%$((columns-${#usage}/3))s" '\e[1mpxltrm 0.0.1\e[0m' "$usage"
+    printf '\e[0m%s' "colors: [0-8] - draw: d - erase: e - clear: c"
     printf '%b' "\\e[${lines};0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
     printf '\e[u'
@@ -68,8 +68,6 @@ main() {
 
     trap 'clear_screen' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
-
-    usage="colors: [0-8] - draw: d - erase: e - clear: c"
 
     while :; do
         status_line
