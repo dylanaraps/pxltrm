@@ -2,12 +2,10 @@
 #
 # A pixel art editor for the terminal.
 
-
 get_term_size() {
     printf '\e[18t'
     IFS=';t' read -d t -t 0.05 -sr _ lines columns
 }
-
 
 status_line() {
     local status block_char
@@ -29,11 +27,9 @@ status_line() {
     printf '\e[u'
 }
 
-
 status_line_clean() {
     printf '%b' "\\e[s\\e[$((lines-2));0H\\e[0J\\e[u"
 }
-
 
 cursor() {
     : "${1: -1}"
@@ -58,7 +54,6 @@ cursor() {
 
     printf '%b' "$_"
 }
-
 
 main() {
     [[ "$1" == "-v" ]] && { set -x; unset PATH; }
