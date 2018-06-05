@@ -53,7 +53,7 @@ save_file() {
         printf '%s' "${history[@]}" > "$1"
         printf '\e[s\e[%s;0H%s\e[u' "$((lines-1))" "File saved in $1"
     }
-    (read -rt 1 -u 2 -p $'\e[1A'; printf '\e[99999D\e[0J\e[u') &
+    (read -rt 1 -u 2 -p $'\e[1A'; printf '\e[99999D\e[0J\e[u\e[1A') &
 }
 
 load_file() {
@@ -85,20 +85,24 @@ cursor() {
         D|h): '\e[1D' ;;
 
         # Color Selection.
-        [1-8]) color="${1: -1}"; return ;;
+        [1-8]) color="${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
         d): "\\e[38;5;${color:=7}m${brush_char:=█}" ;;
         e): "\\b \\b" ;;
 
         # Brushes
-        b) brush_char="${brushes[((j=j>=${#brushes[@]}-1?0:++j))]}"; return ;;
+        b)
+            brush_char="${brushes[((j=j>=${#brushes[@]}-1?0:++j))]}"
+            status_line
+            return
+        ;;
 
         # Saving/Loading
         s|o) prompt "${1: -1}"; return ;;
 
         # Other.
-        c) clear_screen; return ;;
+        c) clear_screen; status_line; return ;;
         *) return ;;
     esac
 
@@ -109,6 +113,7 @@ cursor() {
 main() {
     clear_screen
     get_term_size
+    status_line
 
     trap 'clear_screen' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
@@ -116,9 +121,7 @@ main() {
     history=()
 
     while :; do
-        status_line
-        read -rs -N 1 key
-        cursor "$key"
+        read -rs -N 1 key; cursor "$key"
     done
 }
 
