@@ -8,7 +8,7 @@ get_term_size() {
 }
 
 clear_screen() {
-    printf '%b' '\e[2J\e[1;1H\e[0m\n\n'
+    printf '\e[2J\e[1;1H\e[0m\n\n'
 }
 
 status_line() {
@@ -25,7 +25,7 @@ status_line() {
     done
 
     printf '\e[s\e[0;0H'
-    printf "%b%$((columns-${#usage}*10/25))s" '\e[1mpxltrm 0.0.1\e[0m' "$usage"
+    printf "%b%$((columns-${#usage}/3))s" '\e[1mpxltrm 0.0.1\e[0m' "$usage"
     printf '%b' "\\e[${lines};0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
     printf '\e[u'
@@ -51,6 +51,7 @@ cursor() {
         # Drawing Cells.
         d): "\\e[38;5;${color}m█\\e[1D" ;;
         e): "\\e[38;5;0m█\\e[1D" ;;
+        c)  clear_screen; return ;;
 
         # Other.
         *) return ;;
@@ -68,7 +69,7 @@ main() {
     trap 'clear_screen' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
-    usage="colors: [0-8] - draw: d - erase: e"
+    usage="colors: [0-8] - draw: d - erase: e - clear: c"
 
     while :; do
         status_line
