@@ -21,12 +21,21 @@ get_term_size() {
 status_line() {
     local status
 
-    for i in {0..8}; do
+    # Generate block width based on terminal width.
+    printf -v block_width "%$(("${1:-80}" / 8))s" ""
+
+    for i in {1..8}; do
         ((i>7)) && i="8;5;$i"
-        status+="\\e[4${i}m    \\e[0m"
+        status+="\\e[4${i}m${block_width}\\e[0m"
     done
 
-    printf '%b%b%b' '\e[s\e[999999B\e[9999999D' "$status" '\e[u'
+    printf '\e[s'
+    printf '\e[999999B\e[9999999D'
+    printf '%b' "$status"
+    printf '\e[9999999D\e[1A'
+    printf '%b' "$status"
+    printf '\e[999999B\e[9999999D'
+    printf '\e[u'
 }
 
 
@@ -64,8 +73,8 @@ main() {
     printf '\e[2J\e[1;1H'
 
     while :; do
-        read -rs -N 1 key
         status_line "$columns"
+        read -rs -N 1 key
         cursor "$key"
     done
 }
