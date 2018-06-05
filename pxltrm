@@ -2,6 +2,16 @@
 #
 # A pixel art editor for the terminal.
 
+# Only bash builtins are used.
+unset PATH
+
+# We don't need unicode (we sorta do).
+LC_ALL=C
+LANG=C
+
+brushes=("█" "██" "x" "+")
+
+
 get_term_size() {
     printf '\e[18t'
     IFS=';t' read -d t -t 0.05 -sr _ lines columns
@@ -25,7 +35,7 @@ status_line() {
     done
 
     printf '\e[s\e[0;0H'
-    printf '\e[0m%s' "colors: [0-8] - draw: d - erase: e - clear: c"
+    printf '\e[0m%s' "colors: [0-8] - [d]raw - [e]rase - [c]lear - [b]rush"
     printf '%b' "\\e[${lines};0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
     printf '%b' "\\e[${lines};0Hbrush: ${brush_char:=█}"
@@ -34,11 +44,6 @@ status_line() {
 
 status_line_clean() {
     printf '%b' "\\e[s\\e[$((lines-2));0H\\e[0J\\e[u"
-}
-
-get_brush() {
-    brushes=("█" "x" "+")
-    ((brush=brush>=${#brushes[@]}-1?0:++brush))
 }
 
 cursor() {
@@ -57,7 +62,9 @@ cursor() {
         # Drawing Cells.
         d): "\\e[38;5;${color}m${brush_char:=█}\\e[1D" ;;
         e): "\\e[38;5;0m${brush_char}\\e[1D" ;;
-        b) get_brush; brush_char="${brushes[${brush:=0}]}"; return ;;
+
+        # Brushes
+        b) brush_char="${brushes[((j=j>=${#brushes[@]}-1?0:++j))]}"; return ;;
 
         # Other.
         c) clear_screen; return ;;
