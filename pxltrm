@@ -2,9 +2,6 @@
 #
 # A pixel art editor for the terminal.
 
-# pxltrm uses pure bash.
-unset PATH
-
 # We don't need unicode (we sorta do).
 LC_ALL=C
 LANG=C
@@ -15,6 +12,9 @@ brushes=("█" "██" "░" "▒" "▓")
 get_term_size() {
     printf '\e[18t'
     IFS=';t' read -d t -t 0.05 -sr _ lines columns
+
+    [[ -z "$lines" || -z "$columns" ]] && \
+        read -r lines columns < <(stty size)
 }
 
 clear_screen() {
