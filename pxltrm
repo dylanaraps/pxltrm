@@ -14,7 +14,7 @@ get_term_size() {
 }
 
 clear_screen() {
-    printf '\e[2J\e[2;1H\e[0m'
+    printf '\e[?7l\e[2J\e[2;1H\e[0m'
 }
 
 print_palette() {
@@ -34,11 +34,15 @@ status_line() {
 
     print_palette
 
+    hud="colors [0-8], [d]raw, [e]rase, [c]lear, [s]ave, [o]pen, e[x]it "
+    hud="${hud//\[/\[\\e[1m}"
+    hud="${hud//\]/\\e[0m\]}"
+
     printf '\e[s\e[0;0H'
-    printf '\e[0m%s' "colors [0-8], [d]raw, [e]rase, [c]lear, [s]ave, [o]pen"
+    printf '\e[0m%b' "$hud"
     printf '%b' "\\e[$((lines-2));0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
-    printf '%b' "\\e[$((lines-2));0H[b]rush: ${brush_char:=█}"
+    printf '%b' "\\e[$((lines-2));0H[\\e[1mb\\e[0m]rush: ${brush_char:=█}"
     printf '\e[u'
 
     unset status
@@ -58,6 +62,8 @@ save_file() {
 
 load_file() {
     if [[ -f "$1" ]]; then
+        clear_screen
+        status_line
         load_file="$1"
         printf '%b' "\\e[2;0H$(<"$1")\\e[2;0H"
         history=("$_" "${history[@]}")
@@ -103,6 +109,7 @@ cursor() {
 
         # Other.
         c) clear_screen; status_line; return ;;
+        x) exit ;;
         *) return ;;
     esac
 
@@ -115,7 +122,7 @@ main() {
     get_term_size
     status_line
 
-    trap 'clear_screen' EXIT
+    trap 'clear_screen; printf \\e[?7h' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     history=()

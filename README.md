@@ -6,4 +6,4 @@ A pixel art editor inside the terminal.
 
 ## Dependencies
 
-- `bash`
+- `bash 3.2+`
