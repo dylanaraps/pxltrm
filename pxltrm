@@ -28,11 +28,17 @@ status_line() {
     printf '\e[0m%s' "colors: [0-8] - draw: d - erase: e - clear: c"
     printf '%b' "\\e[${lines};0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
+    printf '%b' "\\e[${lines};0Hbrush: ${brush_char:=█}"
     printf '\e[u'
 }
 
 status_line_clean() {
     printf '%b' "\\e[s\\e[$((lines-2));0H\\e[0J\\e[u"
+}
+
+get_brush() {
+    brushes=("█" "x" "+")
+    ((brush=brush>=${#brushes[@]}-1?0:++brush))
 }
 
 cursor() {
@@ -46,11 +52,12 @@ cursor() {
         D|h): '\e[1D' ;;
 
         # Color Selection.
-        [1-8]) color="${1: -1}" ;;
+        [1-8]) color="${1: -1}"; return ;;
 
         # Drawing Cells.
-        d): "\\e[38;5;${color}m█\\e[1D" ;;
-        e): "\\e[38;5;0m█\\e[1D" ;;
+        d): "\\e[38;5;${color}m${brush_char:=█}\\e[1D" ;;
+        e): "\\e[38;5;0m${brush_char}\\e[1D" ;;
+        b) get_brush; brush_char="${brushes[${brush:=0}]}"; return ;;
 
         # Other.
         c) clear_screen; return ;;
