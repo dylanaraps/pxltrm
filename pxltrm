@@ -79,8 +79,6 @@ cursor() {
 }
 
 main() {
-    [[ "$1" == "-v" ]] && { set -x; unset PATH; }
-
     clear_screen
     get_term_size
 
