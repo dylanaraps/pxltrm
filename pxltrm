@@ -93,7 +93,7 @@ cursor() {
 
         # Drawing Cells.
         d): "\\e[38;5;${color}m${brush_char:=█}" ;;
-        e): "\\e[38;5;0m${brush_char}\\e[0m" ;;
+        e): "\\b \\b" ;;
 
         # Brushes
         b) brush_char="${brushes[((j=j>=${#brushes[@]}-1?0:++j))]}"; return ;;
