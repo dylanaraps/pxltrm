@@ -51,9 +51,9 @@ cursor() {
         # Drawing Cells.
         d): "\\e[38;5;${color}m█\\e[1D" ;;
         e): "\\e[38;5;0m█\\e[1D" ;;
-        c)  clear_screen; return ;;
 
         # Other.
+        c) clear_screen; return ;;
         *) return ;;
     esac
 
