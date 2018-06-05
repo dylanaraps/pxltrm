@@ -22,15 +22,10 @@ status_line() {
         status+="\\e[4${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
     done
 
-    usage="colors: [0-8] - draw: d - erase: e"
-
-    printf '\e[s'
-    printf '%b' '\e[0;0H'
-    printf "\\e[1m%s%$((columns-${#usage}*10/25))s\\e[0m" 'pxltrm 0.0.1' "$usage"
-    printf '%b' "\\e[${lines};0H"
-    printf '%b' "${padding}${status}"
-    printf '%b' "\\e[${columns}D\\e[1A"
-    printf '%b' "${padding}${status//▃/ }"
+    printf '\e[s\e[0;0H'
+    printf "%b%$((columns-${#usage}*10/25))s" '\e[1mpxltrm 0.0.1\e[0m' "$usage"
+    printf '%b' "\\e[${lines};0H${padding}${status}"
+    printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
     printf '\e[u'
 }
 
@@ -75,6 +70,8 @@ main() {
 
     trap 'printf %b $clear' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
+
+    usage="colors: [0-8] - draw: d - erase: e"
 
     while :; do
         status_line
