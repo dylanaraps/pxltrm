@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+#
+# A pixel art editor for the terminal.
+
+
+get_term_size() {
+    printf '%b' '\e[18t'
+    IFS=';t' read -d t -t 0.05 -sra term_cells
+
+    lines="${term_cells[1]}"
+    columns="${term_cells[2]}"
+
+    # Fallback to stty if above sequence isn't supported.
+    [[ -z "$lines" || -z "$columns" ]] && \
+        read -r lines columns < <(stty size)
+
+    printf '%s' "$lines $columns"
+}
+
+
+status_line() {
+    local status
+
+    for i in {0..8}; do
+        ((i>7)) && i="8;5;$i"
+        status+="\\e[4${i}m    \\e[0m"
+    done
+
+    printf '%b%b%b' '\e[s\e[999999B\e[9999999D' "$status" '\e[u'
+}
+
+
+cursor() {
+    : "${1: -1}"
+
+    case "${1: -1}" in
+        # Cursor Movement.
+        A|k): '\e[1A' ;;
+        B|j): '\e[1B' ;;
+        C|l): '\e[1C' ;;
+        D|h): '\e[1D' ;;
+
+        # Color Selection.
+        [1-8]) c="${1: -1}" ;;
+
+        # Drawing Cells.
+        d): "\\e[38;5;${c}m█\\e[1D" ;;
+        e): "\\e[38;5;0m█\\e[1D" ;;
+
+        # Other.
+        *) return ;;
+    esac
+
+    printf '%b' "$_"
+}
+
+
+main() {
+    [[ "$1" == "-v" ]] && set -x
+
+    read -r lines columns < <(get_term_size)
+
+    # Clear the screen.
+    printf '\e[2J\e[1;1H'
+
+    while :; do
+        read -rs -N 1 key
+        status_line "$columns"
+        cursor "$key"
+    done
+}
+
+main "$@"
