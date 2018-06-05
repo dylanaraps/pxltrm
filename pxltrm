@@ -13,7 +13,8 @@ status_line() {
     local status block_char
 
     # Generate block width based on terminal width.
-    printf -v block_width "%$(("${columns:-80}" / 10))s" ""
+    printf -v block_width "%$(("${columns:=80}" / 16))s" ""
+    printf -v padding "%$((columns / 4))s" ""
 
     for i in {1..8}; do
         ((i==color)) && block_char="▃" || block_char=" "
@@ -23,11 +24,12 @@ status_line() {
 
     printf '\e[s'
     printf '%b' "\\e[${lines};0H"
-    printf '%b' "$status"
+    printf '%b' "${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A"
-    printf '%b' "${status//▃/ }"
+    printf '%b' "${padding}${status//▃/ }"
     printf '\e[u'
 }
+
 
 status_line_clean() {
     printf '%b' "\\e[s\\e[$((lines-2));0H\\e[0J\\e[u"
@@ -62,14 +64,14 @@ cursor() {
 main() {
     [[ "$1" == "-v" ]] && { set -x; unset PATH; }
 
-    clear='\e[2J\e[1;1H\e[0m'
+    # Clear the screen.
+    printf '%b' "${clear:=\e[2J\e[1;1H\e[0m}"
+    printf '\033[1m%s\033[0m\n\n' 'pxltrm 0.0.1'
+
     trap 'printf %b $clear' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     get_term_size
-
-    # Clear the screen.
-    printf '%b' "$clear"
 
     while :; do
         status_line
