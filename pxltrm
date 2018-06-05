@@ -5,7 +5,7 @@
 
 get_term_size() {
     printf '\e[18t'
-    IFS=';t' read -d t -t 0.05 -sr _ _ columns
+    IFS=';t' read -d t -t 0.05 -sr _ lines columns
 }
 
 
@@ -13,21 +13,24 @@ status_line() {
     local status block_char
 
     # Generate block width based on terminal width.
-    printf -v block_width "%$(("${1:-80}" / 9))s" ""
+    printf -v block_width "%$(("${columns:-80}" / 10))s" ""
 
-    for i in {0..8}; do
-        ((i==$2)) && block_char="▃" || block_char=" "
+    for i in {1..8}; do
+        ((i==color)) && block_char="▃" || block_char=" "
         ((i>7)) && i="8;5;$i"
         status+="\\e[4${i}m\\e[37m${block_width// /${block_char}}\\e[0m"
     done
 
     printf '\e[s'
-    printf '\e[999999B\e[9999999D'
+    printf '%b' "\\e[${lines};0H"
     printf '%b' "$status"
-    printf '\e[9999999D\e[1A'
+    printf '%b' "\\e[${columns}D\\e[1A"
     printf '%b' "${status//▃/ }"
-    printf '\e[999999B\e[9999999D'
     printf '\e[u'
+}
+
+status_line_clean() {
+    printf '%b' "\\e[s\\e[$((lines-2));0H\\e[0J\\e[u"
 }
 
 
@@ -42,7 +45,7 @@ cursor() {
         D|h): '\e[1D' ;;
 
         # Color Selection.
-        [0-8]) color="${1: -1}" ;;
+        [1-8]) color="${1: -1}" ;;
 
         # Drawing Cells.
         d): "\\e[38;5;${color}m█\\e[1D" ;;
@@ -61,7 +64,7 @@ main() {
 
     clear='\e[2J\e[1;1H\e[0m'
     trap 'printf %b $clear' EXIT
-    trap 'get_term_size' SIGWINCH
+    trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     get_term_size
 
@@ -69,7 +72,7 @@ main() {
     printf '%b' "$clear"
 
     while :; do
-        status_line "$columns" "${color:-7}"
+        status_line
         read -rs -N 1 key
         cursor "$key"
     done
