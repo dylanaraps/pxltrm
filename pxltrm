@@ -7,6 +7,10 @@ get_term_size() {
     IFS=';t' read -d t -t 0.05 -sr _ lines columns
 }
 
+clear_screen() {
+    printf '%b' '\e[2J\e[1;1H\e[0m\n\n'
+}
+
 status_line() {
     local status block_char
 
@@ -58,12 +62,10 @@ cursor() {
 main() {
     [[ "$1" == "-v" ]] && { set -x; unset PATH; }
 
+    clear_screen
     get_term_size
 
-    # Clear the screen.
-    printf '%b' "${clear:=\e[2J\e[1;1H\e[0m\n\n}"
-
-    trap 'printf %b $clear' EXIT
+    trap 'clear_screen' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     usage="colors: [0-8] - draw: d - erase: e"
