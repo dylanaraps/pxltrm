@@ -17,21 +17,22 @@ get_term_size() {
 
 
 status_line() {
-    local status
+    local status block_char
 
     # Generate block width based on terminal width.
     printf -v block_width "%$(("${1:-80}" / 8))s" ""
 
     for i in {1..8}; do
+        ((i==$2)) && block_char="▃" || block_char=" "
         ((i>7)) && i="8;5;$i"
-        status+="\\e[4${i}m${block_width}\\e[0m"
+        status+="\\e[4${i}m\\e[37m${block_width// /${block_char}}\\e[0m"
     done
 
     printf '\e[s'
     printf '\e[999999B\e[9999999D'
     printf '%b' "$status"
     printf '\e[9999999D\e[1A'
-    printf '%b' "$status"
+    printf '%b' "${status//▃/ }"
     printf '\e[999999B\e[9999999D'
     printf '\e[u'
 }
@@ -48,10 +49,10 @@ cursor() {
         D|h): '\e[1D' ;;
 
         # Color Selection.
-        [1-8]) c="${1: -1}" ;;
+        [1-8]) color="${1: -1}" ;;
 
         # Drawing Cells.
-        d): "\\e[38;5;${c}m█\\e[1D" ;;
+        d): "\\e[38;5;${color}m█\\e[1D" ;;
         e): "\\e[38;5;0m█\\e[1D" ;;
 
         # Other.
@@ -71,7 +72,7 @@ main() {
     printf '\e[2J\e[1;1H'
 
     while :; do
-        status_line "$columns"
+        status_line "$columns" "${color:-7}"
         read -rs -N 1 key
         cursor "$key"
     done
