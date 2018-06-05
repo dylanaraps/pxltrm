@@ -2,7 +2,7 @@
 #
 # A pixel art editor for the terminal.
 
-# Only bash builtins are used.
+# pxltrm uses pure bash.
 unset PATH
 
 # We don't need unicode (we sorta do).
@@ -18,7 +18,7 @@ get_term_size() {
 }
 
 clear_screen() {
-    printf '\e[2J\e[1;1H\e[0m\n\n'
+    printf '\e[2J\e[2;1H\e[0m'
 }
 
 print_palette() {
@@ -34,22 +34,50 @@ status_line() {
 
     # Generate block width based on terminal width.
     printf -v block_width "%$(("${columns:=80}" / 16))s" ""
-    printf -v padding "%$((columns / 4))s" ""
+    printf -v padding "%$((columns / 4 + 2))s" ""
 
     print_palette
 
     printf '\e[s\e[0;0H'
-    printf '\e[0m%s' "colors: [0-8] - [d]raw - [e]rase - [c]lear"
-    printf '%b' "\\e[${lines};0H${padding}${status}"
+    printf '\e[0m%s' "colors [0-8], [d]raw, [e]rase, [c]lear, [s]ave, [o]pen"
+    printf '%b' "\\e[$((lines-2));0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
-    printf '%b' "\\e[${lines};0H[b]rush: ${brush_char:=█}"
+    printf '%b' "\\e[$((lines-2));0H[b]rush: ${brush_char:=█}"
     printf '\e[u'
 
     unset status
 }
 
 status_line_clean() {
-    printf '%b' "\\e[s\\e[$((lines-2));0H\\e[0J\\e[u"
+    printf '%b' "\\e[s\\e[$((lines-3));0H\\e[0J\\e[u"
+}
+
+save_file() {
+    [[ ! -z "$1" ]] && {
+        printf '%s' "${history[@]}" > "$1"
+        printf '\e[s\e[%s;0H%s\e[u' "$((lines-1))" "File saved in $1"
+    }
+    (read -rt 1 -u 2 -p $'\e[1A'; printf '\e[99999D\e[0J\e[u') &
+}
+
+load_file() {
+    if [[ -f "$1" ]]; then
+        load_file="$1"
+        printf '%b' "\\e[2;0H$(<"$1")\\e[2;0H"
+        history=("$_" "${history[@]}")
+    fi
+}
+
+prompt() {
+    printf '\e[s\e[%s;0H%s: ' "$((lines-1))" "$1"
+    read -r file
+
+    case "$1" in
+        s) save_file "${file:-$load_file}" ;;
+        o) load_file "$file" ;;
+    esac
+
+    printf '\e[1A\e[u'
 }
 
 cursor() {
@@ -64,11 +92,14 @@ cursor() {
         [1-8]) color="${1: -1}"; return ;;
 
         # Drawing Cells.
-        d): "\\e[38;5;${color}m${brush_char:=█}\\e[1D" ;;
-        e): "\\e[38;5;0m${brush_char}\\e[1D" ;;
+        d): "\\e[38;5;${color}m${brush_char:=█}" ;;
+        e): "\\e[38;5;0m${brush_char}\\e[0m" ;;
 
         # Brushes
         b) brush_char="${brushes[((j=j>=${#brushes[@]}-1?0:++j))]}"; return ;;
+
+        # Saving/Loading
+        s|o) prompt "${1: -1}"; return ;;
 
         # Other.
         c) clear_screen; return ;;
@@ -76,6 +107,7 @@ cursor() {
     esac
 
     printf '%b' "$_"
+    history+=("$_")
 }
 
 main() {
@@ -84,6 +116,8 @@ main() {
 
     trap 'clear_screen' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
+
+    history=()
 
     while :; do
         status_line
