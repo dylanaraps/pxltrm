@@ -69,10 +69,13 @@ cursor() {
 main() {
     [[ "$1" == "-v" ]] && { set -x; unset PATH; }
 
+    clear='\e[2J\e[1;1H'
+    trap 'printf %b $clear' EXIT
+
     get_term_size
 
     # Clear the screen.
-    printf '\e[2J\e[1;1H'
+    printf '%b' "$clear"
 
     while :; do
         status_line "$columns" "${color:-7}"
