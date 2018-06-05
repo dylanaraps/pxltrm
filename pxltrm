@@ -19,10 +19,14 @@ status_line() {
     for i in {1..8}; do
         ((i==color)) && block_char="▃" || block_char=" "
         ((i>7)) && i="8;5;$i"
-        status+="\\e[4${i}m\\e[37m${block_width// /${block_char}}\\e[0m"
+        status+="\\e[4${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
     done
 
+    usage="colors: [0-8] - draw: d - erase: e"
+
     printf '\e[s'
+    printf '%b' '\e[0;0H'
+    printf "\\e[1m%s%$((columns-${#usage}*10/25))s\\e[0m" 'pxltrm 0.0.1' "$usage"
     printf '%b' "\\e[${lines};0H"
     printf '%b' "${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A"
@@ -64,14 +68,13 @@ cursor() {
 main() {
     [[ "$1" == "-v" ]] && { set -x; unset PATH; }
 
+    get_term_size
+
     # Clear the screen.
-    printf '%b' "${clear:=\e[2J\e[1;1H\e[0m}"
-    printf '\033[1m%s\033[0m\n\n' 'pxltrm 0.0.1'
+    printf '%b' "${clear:=\e[2J\e[1;1H\e[0m\n\n}"
 
     trap 'printf %b $clear' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
-
-    get_term_size
 
     while :; do
         status_line
