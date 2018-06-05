@@ -5,14 +5,7 @@
 
 get_term_size() {
     printf '\e[18t'
-    IFS=';t' read -d t -t 0.05 -sra term_cells
-
-    lines="${term_cells[1]}"
-    columns="${term_cells[2]}"
-
-    # Fallback to stty if above sequence isn't supported.
-    [[ -z "$lines" || -z "$columns" ]] && \
-        read -r lines columns < <(stty size)
+    IFS=';t' read -d t -t 0.05 -sr _ _ columns
 }
 
 
@@ -56,7 +49,7 @@ cursor() {
         e): "\\e[38;5;0m█\\e[1D" ;;
 
         # Background Color.
-        i): '\033]11;#ff0000\007' ;;
+        i): "\\033]11;#ff0000\\033\\007" ;;
 
         # Other.
         *) return ;;
@@ -69,8 +62,9 @@ cursor() {
 main() {
     [[ "$1" == "-v" ]] && { set -x; unset PATH; }
 
-    clear='\e[2J\e[1;1H'
+    clear='\e[2J\e[1;1H\e[0m'
     trap 'printf %b $clear' EXIT
+    trap 'get_term_size' SIGWINCH
 
     get_term_size
 
