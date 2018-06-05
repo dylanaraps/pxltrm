@@ -92,7 +92,7 @@ cursor() {
         [1-8]) color="${1: -1}"; return ;;
 
         # Drawing Cells.
-        d): "\\e[38;5;${color}m${brush_char:=█}" ;;
+        d): "\\e[38;5;${color:=7}m${brush_char:=█}" ;;
         e): "\\b \\b" ;;
 
         # Brushes
