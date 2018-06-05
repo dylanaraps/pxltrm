@@ -4,7 +4,7 @@
 
 
 get_term_size() {
-    printf '%b' '\e[18t'
+    printf '\e[18t'
     IFS=';t' read -d t -t 0.05 -sra term_cells
 
     lines="${term_cells[1]}"
@@ -13,8 +13,6 @@ get_term_size() {
     # Fallback to stty if above sequence isn't supported.
     [[ -z "$lines" || -z "$columns" ]] && \
         read -r lines columns < <(stty size)
-
-    printf '%s' "$lines $columns"
 }
 
 
@@ -65,9 +63,9 @@ cursor() {
 
 
 main() {
-    [[ "$1" == "-v" ]] && set -x
+    [[ "$1" == "-v" ]] && { set -x; unset PATH; }
 
-    read -r lines columns < <(get_term_size)
+    get_term_size
 
     # Clear the screen.
     printf '\e[2J\e[1;1H'
