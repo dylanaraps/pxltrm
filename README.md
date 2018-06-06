@@ -1,8 +1,20 @@
-<img src="https://i.imgur.com/v2CckqD.png" alt="pxltrm" align="right"
-width="51%">
-
 <h1 align="center">pxltrm</h1> <p align="center">A [WIP] pixel art editor
 inside the terminal.</p>
+
+<p align="center">
+<a href="https://discord.gg/BtnTPFF"><img
+src="https://img.shields.io/discord/440354555197128704.svg"></a> <a
+href="https://travis-ci.com/dylanaraps/pxltrm"><img
+src="https://travis-ci.com/dylanaraps/pxltrm.svg?branch=master"></a> <a
+href="./LICENSE.md"><img
+src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+<a href="https://www.patreon.com/dyla"><img
+src="https://img.shields.io/badge/donate-patreon-yellow.svg"></a> <a
+href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=V7QNJNKS3WYVS"><img
+src="https://img.shields.io/badge/donate-paypal-green.svg"></a> </p>
+
+<img src="https://i.imgur.com/njPMM2m.png" alt="pxltrm" align="right"
+width="51%">
 
 pxltrm is written in pure bash and heavily abuses escape sequences to
 function. Use a terminal emulator written in the last 20 years or so and
@@ -17,8 +29,8 @@ You can easily save and load your work. Each saved “screen” is just a
 series of escape sequences. All you need to do to view a screen is to
 print the file to the terminal.
 
-<!--Multiple “brushes” are also supported. They’re just characters so you
-can draw with pretty much anything you like.-->
+Multiple “brushes” are also supported. They’re just characters so you can
+draw with pretty much anything you like.
 
 
 ## Dependencies
