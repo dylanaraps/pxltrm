@@ -95,7 +95,7 @@ cursor() {
 
         # Drawing Cells.
         d): "\\e[38;5;${color:=7}m${brush_char:=█}" ;;
-        e): "\\b \\b" ;;
+        e): " " ;;
 
         # Brushes
         b)
