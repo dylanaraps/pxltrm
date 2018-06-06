@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://discord.gg/BtnTPFF"><img
-src="https://img.shields.io/discord/440354555197128704.svg"></a> <a
+src="https://img.shields.io/discord/102860784329052160.svg"></a> <a
 href="https://travis-ci.com/dylanaraps/pxltrm"><img
 src="https://travis-ci.com/dylanaraps/pxltrm.svg?branch=master"></a> <a
 href="./LICENSE.md"><img
