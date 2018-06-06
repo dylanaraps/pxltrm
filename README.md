@@ -17,21 +17,24 @@ src="https://img.shields.io/badge/donate-paypal-green.svg"></a> </p>
 <img src="https://i.imgur.com/njPMM2m.png" alt="pxltrm" align="right"
 width="51%">
 
-pxltrm is written in pure bash and heavily abuses escape sequences to
-function. Use a terminal emulator written in the last 20 years or so and
-you’ll be fine.
+`pxltrm` is a terminal pixel art editor written in pure bash and heavily
+abuses escape sequences to function. Use a terminal emulator written in
+the last 20 years or so and you’ll be fine.
 
 You can use all 256 terminal colors and all hex colors (*if your terminal
-supports true-color*). Pair pxltrm with
+supports true-color*). Pair `pxltrm` with
 [pywal](https://github.com/dylanaraps/pywal) to use palettes generated
 from your wallpaper.
 
 You can easily save and load your work. Each saved “screen” is just a
 series of escape sequences. All you need to do to view a screen is to
-print the file to the terminal.
+print the file to the terminal (*hint hint, you can also open text
+files*).
 
 Multiple “brushes” are also supported. They’re just characters so you can
 draw with pretty much anything you like.
+
+**Note:** This is a work in-progress. When you break it, let me know!
 
 
 ## Dependencies
