@@ -12,7 +12,7 @@ clear_screen() {
 
 print_palette() {
     for i in {1..8}; do
-        ((i==color)) && block_char="▃" || block_char=" "
+        [[ "$i" == "$color" ]] && block_char="▃" || block_char=" "
         ((i>7)) && i="8;5;$i"
         status+="\\e[4${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
     done
@@ -27,7 +27,7 @@ status_line() {
 
     print_palette
 
-    hud="colors [1-8], [d]raw, [e]rase, [c]lear, [s]ave, [o]pen, e[x]it "
+    hud="[c]olor, [d]raw, [e]rase, clea[r], [s]ave, [o]pen, e[x]it "
     hud="${hud//\[/\[\\e[1m}"
     hud="${hud//\]/\\e[0m\]}"
 
@@ -67,12 +67,28 @@ load_file() {
     fi
 }
 
+hex_to_rgb() {
+    ((r=16#${color:1:2}))
+    ((g=16#${color:3:2}))
+    ((b=16#${color:5:6}))
+}
+
+print_color() {
+    case "${color:=7}" in
+        "#"*) hex_to_rgb;: "\\x1b[38;2;${r};${g};${b}m" ;;
+        [0-9]*): "\\e[38;5;${color}m" ;;
+        *): "\\e[38;5;7m"
+    esac
+    printf '%b' "$_"
+}
+
 prompt() {
-    printf '\e[s\e[%s;0H' "$((lines-1))"
+    printf '\e[s\e[%s;0H\e[0m' "$((lines-1))"
 
     case "$1" in
         s) read -rp "save file: " file; save_file "${file:-$load_file}" ;;
         o) read -rp "load file: " file; load_file "$file" ;;
+        c) read -rp "color: " color; status_line ;;
     esac
 
     printf '\e[1A\e[u'
@@ -90,7 +106,7 @@ cursor() {
         [1-8]) color="${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
-        d): "\\e[38;5;${color:=7}m${brush_char:=█}" ;;
+        d) print_color;: "${brush_char:=█}" ;;
         e): " " ;;
 
         # Brushes
@@ -101,10 +117,10 @@ cursor() {
         ;;
 
         # Saving/Loading
-        s|o) prompt "${1: -1}"; return ;;
+        s|o|c) prompt "${1: -1}"; return ;;
 
         # Other.
-        c) clear_screen; status_line; return ;;
+        r) clear_screen; status_line; return ;;
         x) exit ;;
         *) return ;;
     esac
