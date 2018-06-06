@@ -11,8 +11,7 @@ clear_screen() {
 print_palette() {
     for i in {1..8}; do
         [[ "$i" == "$color" ]] && block_char="▃" || block_char=" "
-        ((i>7)) && i="8;5;$i"
-        status+="\\e[4${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
+        status+="\\e[48;5;${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
     done
 }
 
