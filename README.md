@@ -1,5 +1,5 @@
-<img src="https://i.imgur.com/xdeICNH.png" alt="pxltrm" align="right"
-width="50%">
+<img src="https://i.imgur.com/v2CckqD.png" alt="pxltrm" align="right"
+width="51%">
 
 <h1 align="center">pxltrm</h1> <p align="center">A [WIP] pixel art editor
 inside the terminal.</p>
