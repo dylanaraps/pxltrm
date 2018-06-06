@@ -1,8 +1,8 @@
 <img src="https://i.imgur.com/xdeICNH.png" alt="pxltrm" align="right"
 width="50%">
 
-<h1 align="center">pxtrm</h1>
-<p align="center">A pixel art editor inside the terminal.</p>
+<h1 align="center">pxtrm</h1> <p align="center">A [WIP] pixel art editor
+inside the terminal.</p>
 
 pxltrm is written in pure bash and heavily abuses escape sequences to
 function. Use a terminal emulator written in the last 20 years or so and
