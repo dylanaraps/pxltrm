@@ -55,9 +55,8 @@ get_term_size() {
 save_file() {
     [[ ! -z "$1" ]] && {
         printf '%s' "${history[@]}" > "$1"
-        printf '\e[s\e[%s;0H%s\e[u' "$((lines-1))" "File saved in $1"
+        printf '\e[%s;0H%s' "$((lines-1))" "File saved in $1"
     }
-    (read -rt 1 -u 2 -p $'\e[1A'; printf '\e[99999D\e[0J\e[u\e[1A') &
 }
 
 load_file() {
@@ -92,10 +91,10 @@ prompt() {
     case "$1" in
         s) read -rp "save file: " file; save_file "${file:-$load_file}" ;;
         o) read -rp "load file: " file; load_file "$file" ;;
-        c) read -rp "color: " color; status_line ;;
+        c) read -rp "color: " color ;;
     esac
 
-    printf '\e[1A\e[u'
+    printf '\e[u'
 }
 
 cursor() {
@@ -106,8 +105,13 @@ cursor() {
         C|l): '\e[1C' ;;
         D|h): '\e[1D' ;;
 
+        # Line movement.
+        H): '\e[999999D' ;;
+        L): '\e[999999C' ;;
+
         # Color Selection.
         [1-8]) color="${1: -1}"; status_line; return ;;
+        c) prompt "${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
         d) print_color;: "${brush_char:=█}" ;;
@@ -121,7 +125,7 @@ cursor() {
         ;;
 
         # Saving/Loading
-        s|o|c) prompt "${1: -1}"; return ;;
+        s|o) prompt "${1: -1}"; return ;;
 
         # Other.
         r) clear_screen; status_line; return ;;
