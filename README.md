@@ -46,6 +46,12 @@ draw with pretty much anything you like.
 - Move `pxltrm` somewhere in your `$PATH`.
 
 
+## TODO
+
+- Export to `png`.
+- Clean-up of code.
+
+
 ## Donate
 
 Donations allow me to spend more time working on `pxltrm`<br>and my other
