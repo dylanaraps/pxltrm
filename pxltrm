@@ -2,8 +2,6 @@
 #
 # A pixel art editor for the terminal.
 
-brushes=("█" "██" "░" "▒" "▓")
-
 
 clear_screen() {
     printf '\e[?7l\e[2J\e[2;1H\e[0m'
@@ -38,7 +36,7 @@ status_line() {
     printf '%b' "\\e[$((lines-2));0H[\\e[1mc\\e[0m]olor: "
     print_color bg
     printf '%b' "${color}\\e[0m,"
-    printf '%b' " [\\e[1mb\\e[0m]rush: ${brush_char:=█}"
+    printf '%b' " [\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}\\e[0m"
     printf '\e[u'
 
     unset status
@@ -92,6 +90,7 @@ prompt() {
         s) read -rp "save file: " file; save_file "${file:-$load_file}" ;;
         o) read -rp "load file: " file; load_file "$file" ;;
         c) read -rp "color: " color ;;
+        b) read -rp "input brush: " brush_char ;;
     esac
 
     printf '\e[u'
@@ -118,11 +117,7 @@ cursor() {
         e): " " ;;
 
         # Brushes
-        b)
-            brush_char="${brushes[((j=j>=${#brushes[@]}-1?0:++j))]}"
-            status_line
-            return
-        ;;
+        b) prompt "${1: -1}"; status_line; return ;;
 
         # Saving/Loading
         s|o) prompt "${1: -1}"; return ;;
