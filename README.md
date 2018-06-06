@@ -1,14 +1,24 @@
-<img src="https://i.imgur.com/2J6tmIE.png" alt="pxltrm" align="right"
+<img src="https://i.imgur.com/xdeICNH.png" alt="pxltrm" align="right"
 width="50%">
 
-```
-       ▄▄▄·▐▄• ▄ ▄▄▌  ▄▄▄▄▄▄▄▄  • ▌ ▄ ·.
-      ▐█ ▄█ █▌█▌▪██•  •██  ▀▄ █··██ ▐███▪
-       ██▀· ·██· ██▪   ▐█.▪▐▀▀▄ ▐█ ▌▐▌▐█·
-      ▐█▪·•▪▐█·█▌▐█▌▐▌ ▐█▌·▐█•█▌██ ██▌▐█▌
-      .▀   •▀▀ ▀▀.▀▀▀  ▀▀▀ .▀  ▀▀▀  █▪▀▀▀
-```
+<h1 align="center">pxtrm</h1>
 <p align="center">A pixel art editor inside the terminal.</p>
+
+pxltrm is written in pure bash and heavily abuses escape sequences to
+function. Use a terminal emulator written in the last 20 years or so and
+you’ll be fine.
+
+The terminal color palette is used as the drawing palette. Pair pxltrm
+with [pywal](https://github.com/dylanaraps/pywal) to use palettes
+generated from your wallpaper and to change palettes on the fly.
+
+You can easily save and load your work. Each saved “screen” is just a
+series of escape sequences. All you need to do to view a screen is to
+print the file to the terminal.
+
+<!--Multiple “brushes” are also supported. They’re just characters so you
+can draw with pretty much anything you like.-->
+
 
 ## Dependencies
 
