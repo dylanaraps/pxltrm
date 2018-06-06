@@ -140,7 +140,7 @@ main() {
     status_line
 
     trap 'clear_screen; printf \\e[?7h' EXIT
-    trap 'status_line_clean; status_line' SIGWINCH
+    trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     history=()
 
