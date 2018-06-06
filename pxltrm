@@ -142,8 +142,6 @@ main() {
     trap 'clear_screen; printf \\e[?7h' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
-    history=()
-
     while :; do
         read -rs -N 1 key; cursor "$key"
     done
