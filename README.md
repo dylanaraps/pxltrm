@@ -17,9 +17,8 @@ src="https://img.shields.io/badge/donate-paypal-green.svg"></a> </p>
 <img src="https://i.imgur.com/njPMM2m.png" alt="pxltrm" align="right"
 width="51%">
 
-`pxltrm` is a terminal pixel art editor written in pure bash and heavily
-abuses escape sequences to function. Use a terminal emulator written in
-the last 20 years or so and you’ll be fine.
+`pxltrm` is a terminal pixel art editor written in pure bash. It allows
+you to draw pixel art without a mouse.
 
 You can use all 256 terminal colors and all hex colors (*if your terminal
 supports true-color*). Pair `pxltrm` with
