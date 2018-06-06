@@ -2,10 +2,17 @@
 #
 # A pixel art editor for the terminal.
 
+# We don't need to call anything external.
+unset PATH
+
 
 clear_screen() {
     printf '\e[?7l\e[2J\e[2;1H\e[0m'
     history+=("$_")
+}
+
+get_term_size() {
+    shopt -s checkwinsize; (:;:)
 }
 
 print_palette() {
@@ -19,8 +26,8 @@ status_line() {
     local status block_char
 
     # Generate block width based on terminal width.
-    printf -v block_width "%$(("${columns:=80}" / 24))s" ""
-    printf -v padding "%$((columns-columns/3))s" ""
+    printf -v block_width "%$(("${COLUMNS:=80}" / 24))s" ""
+    printf -v padding "%$((COLUMNS-COLUMNS/3))s" ""
 
     print_palette
 
@@ -30,9 +37,9 @@ status_line() {
 
     printf '\e[s\e[0;0H'
     printf '\e[0m%b' "$hud"
-    printf '%b' "\\e[$((lines-2));0H${padding}${status}"
-    printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
-    printf '%b' "\\e[$((lines-2));0H[\\e[1mc\\e[0m]olor: "
+    printf '%b' "\\e[$((LINES-2));0H${padding}${status}"
+    printf '%b' "\\e[${COLUMNS}D\\e[1A${padding}${status//▃/ }"
+    printf '%b' "\\e[$((LINES-2));0H[\\e[1mc\\e[0m]olor: "
     print_color
     printf '%b' "${color}\\e[0m,"
     printf '%b' " [\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}\\e[0m"
@@ -42,17 +49,13 @@ status_line() {
 }
 
 status_line_clean() {
-    printf '%b' "\\e[s\\e[$((lines-3));0H\\e[0J\\e[u"
-}
-
-get_term_size() {
-    read -r lines columns < <(stty size)
+    printf '%b' "\\e[s\\e[$((LINES-3));0H\\e[0J\\e[u"
 }
 
 save_file() {
     [[ ! -z "$1" ]] && {
         printf '%s' "${history[@]}" > "$1"
-        printf '\e[%s;0H%s' "$((lines-1))" "File saved in $1"
+        printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
     }
 }
 
@@ -83,7 +86,7 @@ print_color() {
 }
 
 prompt() {
-    printf '\e[s\e[%s;0H\e[0m' "$((lines-1))"
+    printf '\e[s\e[%s;0H\e[0m' "$((LINES-1))"
 
     case "$1" in
         s) read -rp "save file: " file; save_file "${file:-$load_file}" ;;
@@ -137,7 +140,7 @@ main() {
     status_line
 
     trap 'clear_screen; printf \\e[?7h' EXIT
-    trap 'status_line_clean; get_term_size; status_line' SIGWINCH
+    trap 'status_line_clean; status_line' SIGWINCH
 
     history=()
 
