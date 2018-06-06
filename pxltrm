@@ -116,7 +116,7 @@ cursor() {
 
         # Drawing Cells.
         d) print_color;: "${brush_char:=█}" ;;
-        e): " " ;;
+        e) printf "%${#brush_char}s" "" ;;
 
         # Brushes
         b) prompt "${1: -1}"; status_line; return ;;
