@@ -33,7 +33,7 @@ status_line() {
     printf '%b' "\\e[$((lines-2));0H${padding}${status}"
     printf '%b' "\\e[${columns}D\\e[1A${padding}${status//▃/ }"
     printf '%b' "\\e[$((lines-2));0H[\\e[1mc\\e[0m]olor: "
-    print_color bg
+    print_color
     printf '%b' "${color}\\e[0m,"
     printf '%b' " [\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}\\e[0m"
     printf '\e[u'
