@@ -48,8 +48,8 @@ draw with pretty much anything you like.
 
 ## TODO
 
-- Export to `png`.
-- Clean-up of code.
+- [ ] Export to `png`.
+- [ ] Clean-up of code.
 
 
 ## Donate
