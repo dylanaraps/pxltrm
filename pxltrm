@@ -26,7 +26,7 @@ status_line() {
     local status block_char
 
     # Generate block width based on terminal width.
-    printf -v block_width "%$(("${COLUMNS:=80}" / 24))s" ""
+    printf -v block_width "%$((${COLUMNS:=80} / 24))s" ""
     printf -v padding "%$((COLUMNS-COLUMNS/3))s" ""
 
     print_palette
@@ -143,7 +143,7 @@ main() {
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     while :; do
-        read -rs -N 1 key; cursor "$key"
+        read -rs -n 1 key; cursor "$key"
     done
 }
 
