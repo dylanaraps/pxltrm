@@ -1,5 +1,6 @@
-<h1 align="center">pxltrm</h1> <p align="center">A [WIP] pixel art editor
-inside the terminal.</p>
+
+<h3 align="center"><img src="https://i.imgur.com/OhqRlUl.png" alt="logo" height="150px"></h3>
+<p align="center">A [WIP] pixel art editor inside the terminal.</p>
 
 <p align="center">
 <a href="https://discord.gg/BtnTPFF"><img
