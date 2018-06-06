@@ -24,6 +24,12 @@ can draw with pretty much anything you like.-->
 
 - `bash 3.2+`
 
+
+## Installation
+
+- Move `pxltrm` somewhere in your `$PATH`.
+
+
 ## Donate
 
 Donations allow me to spend more time working on `pxltrm`<br>and my other
