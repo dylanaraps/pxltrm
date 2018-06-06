@@ -35,7 +35,7 @@ status_line() {
 
     print_palette
 
-    hud="colors [0-8], [d]raw, [e]rase, [c]lear, [s]ave, [o]pen, e[x]it "
+    hud="colors [1-8], [d]raw, [e]rase, [c]lear, [s]ave, [o]pen, e[x]it "
     hud="${hud//\[/\[\\e[1m}"
     hud="${hud//\]/\\e[0m\]}"
 
@@ -72,12 +72,11 @@ load_file() {
 }
 
 prompt() {
-    printf '\e[s\e[%s;0H%s: ' "$((lines-1))" "$1"
-    read -r file
+    printf '\e[s\e[%s;0H' "$((lines-1))"
 
     case "$1" in
-        s) save_file "${file:-$load_file}" ;;
-        o) load_file "$file" ;;
+        s) read -rp "save file: " file; save_file "${file:-$load_file}" ;;
+        o) read -rp "load file: " file; load_file "$file" ;;
     esac
 
     printf '\e[1A\e[u'
