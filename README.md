@@ -1,5 +1,5 @@
 
-<h3 align="center"><img src="https://i.imgur.com/OhqRlUl.png" alt="logo" height="150px"></h3>
+<h3 align="center"><img src="https://i.imgur.com/wSBAGO8.png" alt="logo" height="150px"></h3>
 <p align="center">A [WIP] pixel art editor inside the terminal.</p>
 
 <p align="center">
@@ -24,7 +24,7 @@ you’ll be fine.
 You can use all 256 terminal colors and all hex colors (*if your terminal
 supports true-color*). Pair pxltrm with
 [pywal](https://github.com/dylanaraps/pywal) to use palettes generated
-from your wallpaper and to change palettes on the fly.
+from your wallpaper.
 
 You can easily save and load your work. Each saved “screen” is just a
 series of escape sequences. All you need to do to view a screen is to
