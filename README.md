@@ -26,8 +26,7 @@ supports true-color*). Pair `pxltrm` with
 from your wallpaper.
 
 You can easily save and load your work. Each saved “screen” is just a
-series of escape sequences. All you need to do to view a screen is to
-print the file to the terminal (*hint hint, you can also open text
+series of escape sequences. (*hint hint, you can also open text
 files*).
 
 Multiple “brushes” are also supported. They’re just characters so you can
