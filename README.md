@@ -8,9 +8,10 @@ pxltrm is written in pure bash and heavily abuses escape sequences to
 function. Use a terminal emulator written in the last 20 years or so and
 you’ll be fine.
 
-The terminal color palette is used as the drawing palette. Pair pxltrm
-with [pywal](https://github.com/dylanaraps/pywal) to use palettes
-generated from your wallpaper and to change palettes on the fly.
+You can use all 256 terminal colors and all hex colors (*if your terminal
+supports true-color*). Pair pxltrm with
+[pywal](https://github.com/dylanaraps/pywal) to use palettes generated
+from your wallpaper and to change palettes on the fly.
 
 You can easily save and load your work. Each saved “screen” is just a
 series of escape sequences. All you need to do to view a screen is to
