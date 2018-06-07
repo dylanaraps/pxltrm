@@ -105,36 +105,33 @@ paint() {
 cursor() {
     case "${1: -1}" in
         # Cursor Movement.
-        A|k): '\e[1A' ;;
-        B|j): '\e[1B' ;;
-        C|l): '\e[1C' ;;
-        D|h): '\e[1D' ;;
+        A|k) printf '\e[1A' ;;
+        B|j) printf '\e[1B' ;;
+        C|l) printf '\e[1C' ;;
+        D|h) printf '\e[1D' ;;
 
         # Line movement.
-        H): '\e[999999D' ;;
-        L): '\e[999999C' ;;
+        H) printf '\e[999999D' ;;
+        L) printf '\e[999999C' ;;
 
         # Color Selection.
-        [1-8]) color="${1: -1}";  status_line; return ;;
-        c)     prompt "${1: -1}"; status_line; return ;;
+        [1-8]) color="${1: -1}";  status_line ;;
+        c)     prompt "${1: -1}"; status_line ;;
 
         # Drawing Cells.
-        e) paint " "; return ;;
-        d) print_color; paint "${brush_char:=█}" "$print_col"; return ;;
+        e) paint " " ;;
+        d) print_color; paint "${brush_char:=█}" "$print_col" ;;
 
         # Brushes
-        b) prompt "${1: -1}"; status_line; return ;;
+        b) prompt "${1: -1}"; status_line ;;
 
         # Saving/Loading
-        s|o) prompt "${1: -1}"; return ;;
+        s|o) prompt "${1: -1}" ;;
 
         # Other.
-        r) clear_screen; status_line; return ;;
+        r) clear_screen; status_line ;;
         x) exit ;;
-        *) return ;;
     esac
-
-    printf '%b' "$_"
 }
 
 main() {
