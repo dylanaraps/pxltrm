@@ -92,6 +92,8 @@ prompt() {
     esac
 
     printf '\e[u'
+    status_line_clean
+    status_line
 }
 
 cursor() {
