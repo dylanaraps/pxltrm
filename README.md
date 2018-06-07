@@ -3,7 +3,7 @@
 <p align="center">A [WIP] pixel art editor inside the terminal.</p>
 
 <p align="center">
-<a href="https://discord.gg/BtnTPFF"><img
+<a href="https://discord.gg/enF5Gjd"><img
 src="https://img.shields.io/discord/440354555197128704.svg"></a> <a
 href="https://travis-ci.com/dylanaraps/pxltrm"><img
 src="https://travis-ci.com/dylanaraps/pxltrm.svg?branch=master"></a> <a
