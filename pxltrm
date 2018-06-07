@@ -2,7 +2,6 @@
 #
 # pxltrm - A pixel art editor for the terminal.
 
-
 clear_screen() {
     printf '\e[2J\e[2;0H\e[0m'
     history+=("$_")
