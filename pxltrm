@@ -41,7 +41,7 @@ status_line() {
     printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D%b\e[1A\e[%sD%b\e[u' \
            "$((LINES-2))" \
            "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
-           "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}" \
+           "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=▄}" \
            "${padding}${status}" \
            "$COLUMNS" \
            "${padding}${status//▃/ }"
@@ -94,6 +94,12 @@ prompt() {
     printf '\e[u'
 }
 
+get_cursor_pos() {
+    printf '\e[6n'
+    IFS='[;' read -d R -rsa cursor_pos
+    unset 'cursor_pos[0]'
+}
+
 cursor() {
     case "${1: -1}" in
         # Cursor Movement.
@@ -111,7 +117,7 @@ cursor() {
         c)     prompt "${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
-        d) print_color;: "${print_col}${brush_char:=█}" ;;
+        d) print_color;: "${print_col}${brush_char:=▄}" ;;
         e) printf "%${#brush_char}s" "" ;;
 
         # Brushes
@@ -138,7 +144,7 @@ main() {
     trap 'clear_screen; printf \\e[?7h' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
-    for ((;;)); { read -rs -n 1 key; cursor "$key"; }
+    for ((;;)); { read -rs -n 1 key; cursor "$key"; get_cursor_pos; }
 }
 
 main "$@"
