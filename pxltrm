@@ -115,6 +115,11 @@ cursor() {
         # Drawing Cells.
         d) print_color;: "${print_col}${brush_char:=█}" ;;
         e) printf "%${#brush_char}s" "" ;;
+        M)
+            IFS=\; read -rsa pos <<< "${1/'^['}"
+            printf '\e[%sH' "${pos[2]/M};${pos[1]}"
+            print_color;: "${print_col}${brush_char:=█}\\e[1D"
+        ;;
 
         # Brushes
         b) prompt "${1: -1}"; status_line; return ;;
@@ -137,10 +142,13 @@ main() {
     get_term_size
     status_line
 
-    trap 'clear_screen; printf \\e[?7h' EXIT
+    # Enable mouse tracking.
+    printf '\e[?1000h\e[?1006h'
+
+    trap 'clear_screen; printf \\e[?7h\\e[?1000l' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
-    for ((;;)); { read -rs -n 1 key; cursor "$key"; }
+    for ((;;)); { read -p $'\e[38;5;0m' -d "" -t 0.010 -rs key; cursor "$key"; }
 }
 
 main "$@"
