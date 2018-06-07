@@ -27,7 +27,7 @@ status_line() {
 
     # Generate block width based on terminal width.
     printf -v block_width "%$((COLUMNS / 24))s" ""
-    printf -v padding "%$((COLUMNS - COLUMNS / 3))s" ""
+    printf -v padding "%b" "\\e[$((COLUMNS - COLUMNS / 3))C"
 
     print_palette
     print_color
@@ -37,20 +37,14 @@ status_line() {
     hud="${hud//\[/\[\\e[1m}"
     printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
 
-    # Bottom right status bar.
-    printf '\e[%s;0H%b\e[%sD\e[1A%b' \
+    # Bottom status bar.
+    printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D%b\e[1A\e[%sD%b\e[u' \
            "$((LINES-2))" \
+           "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
+           "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}" \
            "${padding}${status}" \
-           "$COLUMNS" \
+           "$((COLUMNS))" \
            "${padding}${status//▃/ }"
-
-    # Bottom left status bar.
-    printf '\e[%s;0H%b%b\e[0m, \e[0m %b \e[1m%b\e[0m\e[u' \
-           "$((LINES-2))" \
-           "[\\e[1mc\\e[0m]olor: ${print_col}" \
-           "$color" \
-           "[\\e[1mb\\e[0m]rush:" \
-           "${brush_char:=█}"
 }
 
 status_line_clean() {
@@ -58,10 +52,9 @@ status_line_clean() {
 }
 
 save_file() {
-    [[ "$1" ]] && {
-        printf '%s' "${history[@]}" > "$1"
-        printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
-    }
+    [[ -z "$1" ]] && return
+    printf '%s' "${history[@]}" > "$1"
+    printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
 }
 
 load_file() {
