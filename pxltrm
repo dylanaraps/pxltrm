@@ -23,7 +23,7 @@ print_palette() {
 }
 
 status_line() {
-    local status block_char
+    local status
 
     # Generate block width based on terminal width.
     printf -v block_width "%$((COLUMNS / 24))s" ""
@@ -74,8 +74,8 @@ hex_to_rgb() {
 print_color() {
     case "${color:=7}" in
         "#"*) hex_to_rgb;: "\\x1b[38;2;${r};${g};${b}m" ;;
-        [0-9]*): "\\e[38;5;${color}m" ;;
-        *): "\\e[38;5;7m"
+        [0-9]*):           "\\e[38;5;${color}m" ;;
+        *):                "\\e[38;5;7m"
     esac
     printf -v print_col '%b' "\\e[1m$_"
     history+=("$_")
