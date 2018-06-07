@@ -95,15 +95,19 @@ prompt() {
 }
 
 get_cursor_pos() {
-    printf '\e[6n'
-    IFS='[;' read -d R -rsa cursor_pos
-    unset 'cursor_pos[0]'
+    IFS='[;' read -p $'\e[6n' -d R -rsa cursor_pos
 }
+
+cursors=(4 6)
 
 cursor() {
     case "${1: -1}" in
         # Cursor Movement.
-        A|k): '\e[1A' ;;
+        A|k)
+            ((j=j>=${#cursors[@]}?0:j++))
+            : "\\e[${cursors[$((j=j>=${#cursors[@]}?0:j++))]} q\\e[1A"
+        ;;
+
         B|j): '\e[1B' ;;
         C|l): '\e[1C' ;;
         D|h): '\e[1D' ;;
@@ -140,8 +144,9 @@ main() {
     clear_screen
     get_term_size
     status_line
+    printf '\e[4 q'
 
-    trap 'clear_screen; printf \\e[?7h' EXIT
+    trap 'clear_screen; printf \\e[?7h\\e[ q' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     for ((;;)); { read -rs -n 1 key; cursor "$key"; get_cursor_pos; }
