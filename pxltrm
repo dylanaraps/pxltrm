@@ -146,7 +146,7 @@ main() {
     trap 'clear_screen; printf \\e[?7h\\e[?1000l' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
-    for ((;;)); { read -d "" -t 0.010 -rs key; cursor "$key"; }
+    for ((;;)); { read -p $'\e[38;5;0m' -d "" -t 0.010 -rs key; cursor "$key"; }
 }
 
 main "$@"
