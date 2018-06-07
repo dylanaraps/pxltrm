@@ -4,8 +4,8 @@
 
 
 clear_screen() {
-    printf '\e[2J\e[2;1H\e[0m'
-    history+=('\e[2;0H')
+    printf '\e[2J\e[2;0H\e[0m'
+    history+='\e[2;0H'
 }
 
 get_term_size() {
@@ -53,8 +53,7 @@ status_line_clean() {
 
 save_file() {
     [[ -z "$1" ]] && return
-    history=('\e[2;0H\e[2J' "${history[@]}" "\\e[999999;0H\\e[0m")
-    printf '%b' "${history[@]}" > "$1"
+    printf '%b' "\\e[2;0H\\e[2J${history}\\e[999999;0H\\e[0m" > "$1"
     printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
 }
 
@@ -62,7 +61,7 @@ load_file() {
     clear_screen
     load_file="$1"
     printf '%b' "\\e[2;0H$(<"$1")\\e[2;0H"
-    history=("$_" "${history[@]}")
+    history="${_}${history}"
     status_line
 }
 
@@ -79,7 +78,7 @@ print_color() {
         *):                "\\e[38;5;7m"
     esac
     printf -v print_col '%b' "\\e[1m$_"
-    history+=("$_")
+    history+="$_"
 }
 
 prompt() {
@@ -130,7 +129,7 @@ cursor() {
     esac
 
     printf '%b' "$_"
-    history+=("$_")
+    history+="$_"
 }
 
 main() {
