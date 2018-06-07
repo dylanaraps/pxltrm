@@ -5,7 +5,6 @@
 
 clear_screen() {
     printf '\e[2J\e[2;0H\e[0m'
-    history+='\e[2;0H'
 }
 
 get_term_size() {
@@ -53,15 +52,16 @@ status_line_clean() {
 
 save_file() {
     [[ -z "$1" ]] && return
-    printf '%b' "\\e[2;0H\\e[2J${history}\\e[999999;0H\\e[0m" > "$1"
+    printf '%b\n' "\\e[2J\\e[2;0H${history}\\e[0m\\e[99999;0H" > "$1"
     printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
 }
 
 load_file() {
     clear_screen
     load_file="$1"
-    printf '%b' "\\e[2;0H$(<"$1")\\e[2;0H"
-    history="${_}${history}"
+    file_data="$(<"$1")"
+    printf '%b' "\\e[2;0H${file_data}\\e[2;0H"
+    history+="$file_data"
     status_line
 }
 
@@ -78,7 +78,6 @@ print_color() {
         *):                "\\e[38;5;7m"
     esac
     printf -v print_col '%b' "\\e[1m$_"
-    history+="$_"
 }
 
 prompt() {
@@ -94,6 +93,11 @@ prompt() {
     printf '\e[u'
     status_line_clean
     status_line
+}
+
+get_cursor_pos() {
+    IFS='[;' read -p $'\e[6n' -d R -rsa cursor_pos
+    cursor_pos="${cursor_pos[1]};${cursor_pos[2]}"
 }
 
 cursor() {
@@ -113,8 +117,13 @@ cursor() {
         c)     prompt "${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
-        d) print_color;: "${print_col}${brush_char:=█}" ;;
         e) printf "%${#brush_char}s" "" ;;
+        d)
+            get_cursor_pos
+            print_color
+            printf '%b' "\\e[${cursor_pos}H${print_col}${brush_char:=█}"
+            history+="$_"
+        ;;
 
         # Brushes
         b) prompt "${1: -1}"; status_line; return ;;
@@ -129,7 +138,6 @@ cursor() {
     esac
 
     printf '%b' "$_"
-    history+="$_"
 }
 
 main() {
