@@ -25,7 +25,6 @@ print_palette() {
 status_line() {
     local status
 
-    # Generate block width based on terminal width.
     printf -v block_width "%$((COLUMNS / 24))s" ""
     printf -v padding "%b" "\\e[$((COLUMNS - COLUMNS / 3))C"
 
