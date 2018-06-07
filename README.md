@@ -26,8 +26,8 @@ supports true-color*). Pair `pxltrm` with
 from your wallpaper.
 
 You can easily save and load your work. Each saved “screen” is just a
-series of escape sequences. (*hint hint, you can also open text
-files*).
+series of escape sequences. Using `cat` you can easily view your art in
+the terminal. (*hint hint, you can also open text files*).
 
 Multiple “brushes” are also supported. They’re just characters so you can
 draw with pretty much anything you like.
