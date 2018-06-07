@@ -96,9 +96,10 @@ prompt() {
     status_line
 }
 
-get_cursor_pos() {
-    IFS='[;' read -p $'\e[6n' -d R -rsa cursor_pos
-    cursor_pos="${cursor_pos[1]};${cursor_pos[2]}"
+paint() {
+    IFS='[;' read -p $'\e[6n' -d R -rsa pos
+    printf '%b' "\\e[${pos[1]};${pos[2]}H${2}${1}"
+    history+=("$_")
 }
 
 cursor() {
@@ -118,20 +119,8 @@ cursor() {
         c)     prompt "${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
-        e)
-            get_cursor_pos
-            printf '%b' "\\e[${cursor_pos}H "
-            history+=("$_")
-            return
-        ;;
-
-        d)
-            get_cursor_pos
-            print_color
-            printf '%b' "\\e[${cursor_pos}H${print_col}${brush_char:=█}"
-            history+=("$_")
-            return
-        ;;
+        e) paint " "; return ;;
+        d) print_color; paint "${brush_char:=█}" "$print_col"; return ;;
 
         # Brushes
         b) prompt "${1: -1}"; status_line; return ;;
