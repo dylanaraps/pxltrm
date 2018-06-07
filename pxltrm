@@ -43,7 +43,7 @@ status_line() {
            "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
            "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}" \
            "${padding}${status}" \
-           "$((COLUMNS))" \
+           "$COLUMNS" \
            "${padding}${status//▃/ }"
 }
 
