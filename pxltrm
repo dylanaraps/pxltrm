@@ -4,7 +4,7 @@
 
 
 clear_screen() {
-    printf '\e[?7l\e[2J\e[2;1H\e[0m'
+    printf '\e[2J\e[2;1H\e[0m'
     history+=('\e[2;0H')
 }
 
@@ -53,7 +53,8 @@ status_line_clean() {
 
 save_file() {
     [[ -z "$1" ]] && return
-    printf '%s' "${history[@]}" > "$1"
+    history=('\e[2;0H\e[2J' "${history[@]}" "\\e[999999;0H\\e[0m")
+    printf '%b' "${history[@]}" > "$1"
     printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
 }
 
@@ -137,7 +138,7 @@ main() {
     get_term_size
     status_line
 
-    trap 'clear_screen; printf \\e[?7h' EXIT
+    trap 'clear_screen' EXIT
     trap 'status_line_clean; get_term_size; status_line' SIGWINCH
 
     for ((;;)); { read -rs -n 1 key; cursor "$key"; }
