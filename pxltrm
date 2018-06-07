@@ -30,6 +30,7 @@ status_line() {
     printf -v padding "%$((COLUMNS - COLUMNS / 3))s" ""
 
     print_palette
+    print_color
 
     # Top status bar.
     hud="[d]raw, [e]rase, clea[r], [s]ave, [o]pen, e[x]it "
@@ -37,14 +38,19 @@ status_line() {
     printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
 
     # Bottom right status bar.
-    printf '%b' "\\e[$((LINES-2));0H${padding}${status}"
-    printf '%b' "\\e[${COLUMNS}D\\e[1A${padding}${status//▃/ }"
+    printf '\e[%s;0H%b\e[%sD\e[1A%b' \
+           "$((LINES-2))" \
+           "${padding}${status}" \
+           "$COLUMNS" \
+           "${padding}${status//▃/ }"
 
     # Bottom left status bar.
-    printf '%b' "\\e[$((LINES-2));0H[\\e[1mc\\e[0m]olor: "
-    print_color
-    printf '%b' "${color}\\e[0m,"
-    printf '%b' " [\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}\\e[0m\\e[u"
+    printf '\e[%s;0H%b%b\e[0m, \e[0m %b \e[1m%b\e[0m\e[u' \
+           "$((LINES-2))" \
+           "[\\e[1mc\\e[0m]olor: ${print_col}" \
+           "$color" \
+           "[\\e[1mb\\e[0m]rush:" \
+           "${brush_char:=█}"
 }
 
 status_line_clean() {
@@ -78,7 +84,7 @@ print_color() {
         [0-9]*): "\\e[38;5;${color}m" ;;
         *): "\\e[38;5;7m"
     esac
-    printf '%b' "\\e[1m$_"
+    printf -v print_col '%b' "\\e[1m$_"
     history+=("$_")
 }
 
@@ -112,7 +118,7 @@ cursor() {
         c)     prompt "${1: -1}"; status_line; return ;;
 
         # Drawing Cells.
-        d) print_color;: "${brush_char:=█}" ;;
+        d) print_color;: "${print_col}${brush_char:=█}" ;;
         e) printf "%${#brush_char}s" "" ;;
 
         # Brushes
