@@ -104,10 +104,10 @@ paint() {
 cursor() {
     case "${1: -1}" in
         # Cursor Movement.
-        A|k) printf '\e[1A' ;;
-        B|j) printf '\e[1B' ;;
-        C|l) printf '\e[1C' ;;
-        D|h) printf '\e[1D' ;;
+        A|k) printf '\e[A' ;;
+        B|j) printf '\e[B' ;;
+        C|l) printf '\e[C' ;;
+        D|h) printf '\e[D' ;;
 
         # Line movement.
         H) printf '\e[999999D' ;;
