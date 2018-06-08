@@ -96,8 +96,8 @@ prompt() {
 }
 
 paint() {
-    IFS='[;' read -p $'\e[6n' -d R -rsa pos
-    printf '%b' "\\e[${pos[1]};${pos[2]}H${2}${1}"
+    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
+    printf '%b' "\\e[${y};${x}H${2}${1}"
     history+=("$_")
 }
 
