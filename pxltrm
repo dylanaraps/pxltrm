@@ -97,7 +97,7 @@ prompt() {
 
 paint() {
     IFS='[;' read -p $'\e[6n' -d R -rs _ y x
-    printf '%b' "\\e[${y};${x}H${2}${1}"
+    printf '%b' "\\e[${y};${x}H${2}${1}\\b"
     history+="$_"
 }
 
