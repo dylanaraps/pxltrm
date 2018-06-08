@@ -51,7 +51,7 @@ status_line_clean() {
 
 save_file() {
     [[ -z "$1" ]] && return
-    printf '%b\n' "\\e[2J\\e[2;0H${history}\\e[0m\\e[99999;0H" > "$1"
+    printf '%b' "\\e[2J\\e[2;0H${history}\\e[0m\\e[99999;0H" > "$1"
     printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
 }
 
