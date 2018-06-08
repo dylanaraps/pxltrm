@@ -10,8 +10,7 @@ clear_screen() {
 get_term_size() {
     shopt -s checkwinsize; (:;:)
 
-    [[ -z "$LINES" || -z "$COLUMNS" ]] && \
-        read -r LINES COLUMNS < <(stty size)
+    [[ -z "${LINES:+$COLUMNS}" ]] && read -r LINES COLUMNS < <(stty size)
 }
 
 print_palette() {
