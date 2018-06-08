@@ -52,7 +52,6 @@ status_line_clean() {
 save_file() {
     [[ -z "$1" ]] && return
     printf '%b' "\\e[2J\\e[2;0H${history}\\e[0m\\e[99999;0H" > "$1"
-    printf '\e[%s;0H%s' "$((LINES-1))" "File saved in $1"
 }
 
 load_file() {
@@ -115,18 +114,14 @@ cursor() {
 
         # Color Selection.
         [1-8]) color="${1: -1}";  status_line ;;
-        c)     prompt "${1: -1}"; status_line ;;
 
         # Drawing Cells.
         e) paint " " ;;
         d) print_color; paint "${brush_char:=█}" "$print_col" ;;
         r) clear_screen; status_line ;;
 
-        # Brushes
-        b) prompt "${1: -1}"; status_line ;;
-
         # Keys that need further input.
-        s|o|x) prompt "${1: -1}" ;;
+        b|c|o|s|x) prompt "${1: -1}"; status_line ;;
     esac
 }
 
