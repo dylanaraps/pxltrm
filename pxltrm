@@ -35,10 +35,11 @@ status_line() {
     print_color
 
     hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo, e[x]it "
+    hud="${hud::$COLUMNS}"
     hud="${hud//\[/\[\\e[1m}"
     printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
 
-    printf '\e[?7h\e[%s;H\e[0m%b\e[0m, %b\e[0m\e[9999D%b\e[A\e[%sD%b\e[u\e[?7l' \
+    printf '\e[%s;H\e[0m%b\e[0m, %b\e[0m\e[9999D%b\e[A\e[%sD%b\e[u' \
            "$((LINES-2))" \
            "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
            "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}" \
