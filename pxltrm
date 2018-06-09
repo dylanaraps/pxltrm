@@ -4,7 +4,7 @@
 
 clear_screen() {
     printf '\e[2J\e[2;0H\e[0m'
-    history+="$_"
+    unset history
 }
 
 status_line_clean() {
