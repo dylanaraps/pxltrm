@@ -28,8 +28,8 @@ print_palette() {
 status_line() {
     local status
 
-    printf -v block_width "%$((COLUMNS / 24))s" ""
-    printf -v padding "%b" "\\e[$((COLUMNS - COLUMNS / 3))C"
+    printf -v block_width "%$((COLUMNS / 24))s"
+    printf -v padding '\e[%bC' "$((COLUMNS - COLUMNS / 3))"
 
     print_palette
     print_color
