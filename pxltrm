@@ -8,7 +8,7 @@ clear_screen() {
 }
 
 status_line_clean() {
-    printf '%b' "\\e[s\\e[$((LINES-3));0H\\e[0J\\e[u"
+    printf '\e[s\e[%b;H\e[J\e[u' "$((LINES-3))"
 }
 
 get_term_size() {
@@ -34,10 +34,11 @@ status_line() {
     print_palette
     print_color
 
-    hud="[d]raw, [e]rase, clea[r], [s]ave, [o]pen"
+    hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo"
     hud="${hud::$COLUMNS}"
     hud="${hud//\[/\[\\e[1m}"
     printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
+
 
     printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D\e[A%b\e[u' \
            "$((LINES-2))" \
@@ -47,7 +48,8 @@ status_line() {
 }
 
 save_file() {
-    printf '%b' "\\e[2J\\e[2;0H${history}\\e[0m\\e[99999;0H" > "${1:-/dev/null}"
+    local IFS=
+    printf '\e[2J\e[2;H%b\e[0m\e[9999;H' "${history[*]}" > "${1:-/dev/null}"
 }
 
 load_file() {
@@ -55,6 +57,18 @@ load_file() {
     printf '\e[2;H%b\e[2;H' "$(<"$1")"
     history+="$_"
     status_line
+}
+
+undo() {
+    undos+=("${history[-1]}")
+    printf '%b \b' "${history[-1]}"
+    unset 'history[-1]'
+}
+
+redo() {
+    history+=("${undos[-1]}")
+    printf '%b' "${undos[-1]}"
+    unset 'undos[-1]'
 }
 
 hex_to_rgb() {
@@ -75,7 +89,7 @@ print_color() {
 paint() {
     IFS='[;' read -p $'\e[6n' -d R -rs _ y x
     printf '%b' "\\e[${y};${x}H${2}${1}\\b"
-    history+="$_"
+    history+=("$_")
 }
 
 prompt() {
@@ -86,7 +100,7 @@ prompt() {
         o) read -rp "load file: " file; [[ -f "$file" ]] && load_file "$file" ;;
         c) read -rp "input color: " color ;;
         b) read -rp "input brush: " brush_char ;;
-        r) read -n 1 -rp "clear? [y/n]: " yn; [[ "$yn" == y ]] && clear_screen ;;
+        a) read -n 1 -rp "clear? [y/n]: " y; [[ "$y" == y ]] && clear_screen ;;
     esac
 
     printf '\e[u'
@@ -107,8 +121,10 @@ cursor() {
 
         e) paint " " ;;
         d) print_color; paint "${brush_char:=█}" "$print_col" ;;
+        u) (("${#history}">0)) && undo; status_line ;;
+        r) (("${#undos}">2))   && redo; status_line ;;
 
-        b|c|o|r|s) prompt "${1: -1}"; status_line ;;
+        a|b|c|o|s) prompt "${1: -1}"; status_line ;;
     esac
 }
 
