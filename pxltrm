@@ -29,12 +29,10 @@ status_line() {
     print_palette
     print_color
 
-    # Top status bar.
     hud="[d]raw, [e]rase, clea[r], [s]ave, [o]pen, e[x]it "
     hud="${hud//\[/\[\\e[1m}"
     printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
 
-    # Bottom status bar.
     printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D%b\e[1A\e[%sD%b\e[u' \
            "$((LINES-2))" \
            "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
@@ -100,24 +98,18 @@ paint() {
 
 cursor() {
     case "${1: -1}" in
-        # Cursor Movement.
         A|k) printf '\e[A' ;;
         B|j) printf '\e[B' ;;
         C|l) printf '\e[C' ;;
         D|h) printf '\e[D' ;;
+        H)   printf '\e[999999D' ;;
+        L)   printf '\e[999999C' ;;
 
-        # Line movement.
-        H) printf '\e[999999D' ;;
-        L) printf '\e[999999C' ;;
-
-        # Color Selection.
         [1-8]) color="${1: -1}";  status_line ;;
 
-        # Drawing Cells.
         e) paint " " ;;
         d) print_color; paint "${brush_char:=█}" "$print_col" ;;
 
-        # Keys that need further input.
         b|c|o|r|s|x) prompt "${1: -1}"; status_line ;;
     esac
 }
