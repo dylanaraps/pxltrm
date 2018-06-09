@@ -60,14 +60,12 @@ load_file() {
 }
 
 undo() {
-    (("${#history}"==0)) && return
     undos+=("${history[-1]}")
     printf '%b \b' "${history[-1]}"
     unset 'history[-1]'
 }
 
 redo() {
-    (("${#undos}"<2)) && return
     history+=("${undos[-1]}")
     printf '%b' "${undos[-1]}"
     unset 'undos[-1]'
@@ -124,8 +122,8 @@ cursor() {
 
         e) paint " " ;;
         d) print_color; paint "${brush_char:=█}" "$print_col" ;;
-        u) undo; status_line ;;
-        r) redo; status_line ;;
+        u) (("${#history}">0)) && undo; status_line ;;
+        r) (("${#undos}">2))   && redo; status_line ;;
 
         a|b|c|o|s|x) prompt "${1: -1}"; status_line ;;
     esac
