@@ -4,7 +4,7 @@
 
 clear_screen() {
     printf '\e[2J\e[2;H\e[m'
-    unset history
+    unset hist
 }
 
 status_line_clean() {
@@ -48,24 +48,24 @@ status_line() {
 
 save_file() {
     local IFS=
-    printf '\e[2J\e[2;H%b\e[m\e[%s;H' "${history[*]}" "$((LINES-3))" > "${1:-:}"
+    printf '\e[2J\e[2;H%b\e[m\e[%s;H' "${hist[*]}" "$((LINES-3))" > "$1"
 }
 
 load_file() {
     clear_screen
     printf '\e[2;H%b\e[2;H' "$(<"$1")"
-    history+="$_"
+    hist+="$_"
     status_line
 }
 
 undo() {
-    undos+=("${history[-1]}")
-    printf '%b \b' "${history[-1]}"
-    unset 'history[-1]'
+    undos+=("${hist[-1]}")
+    printf '%b \b' "${hist[-1]}"
+    unset 'hist[-1]'
 }
 
 redo() {
-    history+=("${undos[-1]}")
+    hist+=("${undos[-1]}")
     printf '%b' "${undos[-1]}"
     unset 'undos[-1]'
 }
@@ -88,14 +88,14 @@ print_color() {
 paint() {
     IFS='[;' read -p $'\e[6n' -d R -rs _ y x
     printf '%b' "\\e[${y};${x}H${2}${1}\\b"
-    history+=("$_")
+    hist+=("$_")
 }
 
 prompt() {
     printf '\e[s\e[%s;H\e[m' "$((LINES-1))"
 
     case "$1" in
-        s) read -rp "save file: " file; save_file "$file" ;;
+        s) read -rp "save file: " file; save_file "${file:-/dev/null}" ;;
         o) read -rp "load file: " file; [[ -f "$file" ]] && load_file "$file" ;;
         c) read -rp "input color: " color ;;
         b) read -rp "input brush: " brush_char ;;
@@ -120,8 +120,8 @@ cursor() {
 
         e) paint " " ;;
         d) print_color; paint "${brush_char:=█}" "$print_col" ;;
-        u) (("${#history}">0)) && undo; status_line ;;
-        r) (("${#undos}">2))   && redo; status_line ;;
+        u) (("${#hist}">0))  && undo; status_line ;;
+        r) (("${#undos}">2)) && redo; status_line ;;
 
         a|b|c|o|s) prompt "${1: -1}"; status_line ;;
     esac
