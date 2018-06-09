@@ -46,8 +46,9 @@ without a mouse using intuitive hotkeys.
 
 ## TODO
 
-- [ ] Export to `png`.
-- [ ] man page.
+- [ ] Export to plain text (*chars + whitespace + colors*)
+- [ ] Export to `ppm` or `bpm`.
+- [ ] Manual.
 
 
 ## Donate
