@@ -7,6 +7,10 @@ clear_screen() {
     history+="$_"
 }
 
+status_line_clean() {
+    printf '%b' "\\e[s\\e[$((LINES-3));0H\\e[0J\\e[u"
+}
+
 get_term_size() {
     shopt -s checkwinsize; (:;:)
 
@@ -43,10 +47,6 @@ status_line() {
            "${padding}${status//▃/ }"
 }
 
-status_line_clean() {
-    printf '%b' "\\e[s\\e[$((LINES-3));0H\\e[0J\\e[u"
-}
-
 save_file() {
     printf '%b' "\\e[2J\\e[2;0H${history}\\e[0m\\e[99999;0H" > "${1:-/dev/null}"
 }
@@ -73,6 +73,12 @@ print_color() {
     printf -v print_col '%b' "\\e[1m$_"
 }
 
+paint() {
+    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
+    printf '%b' "\\e[${y};${x}H${2}${1}\\b"
+    history+="$_"
+}
+
 prompt() {
     printf '\e[s\e[%s;0H\e[0m' "$((LINES-1))"
 
@@ -88,12 +94,6 @@ prompt() {
     printf '\e[u'
     status_line_clean
     status_line
-}
-
-paint() {
-    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
-    printf '%b' "\\e[${y};${x}H${2}${1}\\b"
-    history+="$_"
 }
 
 cursor() {
