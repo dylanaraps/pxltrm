@@ -70,8 +70,8 @@ undo() {
 
 redo() {
     (("${#undos}"<2)) && return
-    printf '%b' "${undos[-1]}"
     history+=("${undos[-1]}")
+    printf '%b' "${undos[-1]}"
     unset 'undos[-1]'
 }
 
