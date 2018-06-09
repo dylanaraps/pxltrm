@@ -7,10 +7,15 @@ clear_screen() {
     history+=("$_")
 }
 
+status_line_clean() {
+    printf '\e[s\e[%b;H\e[J\e[u' "$((LINES-3))"
+}
+
 get_term_size() {
     shopt -s checkwinsize; (:;:)
 
-    [[ -z "${LINES:+$COLUMNS}" ]] && read -r LINES COLUMNS < <(stty size)
+    [[ -z "${LINES:+$COLUMNS}" ]] && \
+        read -r LINES COLUMNS < <(stty size)
 }
 
 print_palette() {
@@ -40,10 +45,6 @@ status_line() {
            "${padding}${status}" \
            "$COLUMNS" \
            "${padding}${status//▃/ }"
-}
-
-status_line_clean() {
-    printf '\e[s\e[%b;H\e[J\e[u' "$((LINES-3))"
 }
 
 save_file() {
@@ -86,6 +87,12 @@ print_color() {
     printf -v print_col '%b' "\\e[1m$_"
 }
 
+paint() {
+    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
+    printf '%b' "\\e[${y};${x}H${2}${1}\\b"
+    history+=("$_")
+}
+
 prompt() {
     printf '\e[s\e[%s;0H\e[0m' "$((LINES-1))"
 
@@ -101,12 +108,6 @@ prompt() {
     printf '\e[u'
     status_line_clean
     status_line
-}
-
-paint() {
-    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
-    printf '%b' "\\e[${y};${x}H${2}${1}\\b"
-    history+=("$_")
 }
 
 cursor() {
