@@ -3,7 +3,7 @@
 # pxltrm - A pixel art editor for the terminal.
 
 clear_screen() {
-    printf '\e[2J\e[2;0H\e[0m'
+    printf '\e[2J\e[2;H\e[m'
     unset history
 }
 
@@ -21,7 +21,7 @@ get_term_size() {
 print_palette() {
     for i in {1..8}; do
         [[ "$i" == "$color" ]] && block_char="▃" || block_char=" "
-        status+="\\e[48;5;${i}m\\e[30m${block_width// /${block_char}}\\e[0m"
+        status+="\\e[48;5;${i}m\\e[30m${block_width// /${block_char}}\\e[m"
     done
 }
 
@@ -37,18 +37,18 @@ status_line() {
     hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo"
     hud="${hud::$COLUMNS}"
     hud="${hud//\[/\[\\e[1m}"
-    printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
+    printf '\e[s\e[;H\e[m%b' "${hud//\]/\\e[m\]}"
 
-    printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D\e[A%b\e[u' \
+    printf '\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
            "$((LINES-2))" \
-           "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
-           "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}" \
+           "[\\e[1mc\\e[m]olor: ${print_col}${color}" \
+           "[\\e[1mb\\e[m]rush: \\e[1m${brush_char:=█}" \
            "${padding}${status//▃/ }\\n${padding}${status}"
 }
 
 save_file() {
     local IFS=
-    printf '\e[2J\e[2;H%b\e[0m\e[9999;H' "${history[*]}" > "${1:-/dev/null}"
+    printf '\e[2J\e[2;H%b\e[m\e[9999;H' "${history[*]}" > "${1:-/dev/null}"
 }
 
 load_file() {
@@ -78,11 +78,11 @@ hex_to_rgb() {
 
 print_color() {
     case "${color:=7}" in
-        "#"*) hex_to_rgb;: "\\x1b[38;2;${r};${g};${b}m" ;;
+        "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
         [0-9]*):           "\\e[38;5;${color}m" ;;
         *):                "\\e[38;5;7m"
     esac
-    printf -v print_col '%b' "\\e[1m$_"
+    printf -v print_col '%b' "\\e[1m${_}"
 }
 
 paint() {
@@ -92,7 +92,7 @@ paint() {
 }
 
 prompt() {
-    printf '\e[s\e[%s;0H\e[0m' "$((LINES-1))"
+    printf '\e[s\e[%s;H\e[m' "$((LINES-1))"
 
     case "$1" in
         s) read -rp "save file: " file; save_file "$file" ;;
