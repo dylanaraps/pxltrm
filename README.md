@@ -17,20 +17,19 @@ src="https://img.shields.io/badge/donate-paypal-green.svg"></a> </p>
 <img src="https://i.imgur.com/njPMM2m.png" alt="pxltrm" align="right"
 width="51%">
 
-`pxltrm` is a terminal pixel art editor written in pure bash. It allows
-you to draw pixel art without a mouse.
+`pxltrm` is a terminal pixel art editor written in pure bash. Draw pixel art
+without a mouse using intuitive hotkeys.
 
-You can use all 256 terminal colors and all hex colors (*if your terminal
-supports true-color*). Pair `pxltrm` with
-[pywal](https://github.com/dylanaraps/pywal) to use palettes generated
-from your wallpaper.
-
-You can easily save and load your work. Each saved “screen” is just a
-series of escape sequences. Using `cat` you can easily view your art in
-the terminal. (*hint hint, you can also open text files*).
-
-Multiple “brushes” are also supported. They’re just characters so you can
-draw with pretty much anything you like.
+- Fast (*Less than 150 lines of pure bash*).
+- Lightweight (*Low on CPU/Memory usage*).
+- Supports 256 color terminal palette.
+- Supports all hex colors (*through true-color terminals*).
+- Undo/Redo of open screens.
+- Save/Load screens.
+- View saved screens with `cat`.
+- Use any character or string as a brush.
+- Responds to window resize.
+- Vim `hjkl` movement.
 
 **Note:** This is a work in-progress. When you break it, let me know!
 
@@ -48,7 +47,7 @@ draw with pretty much anything you like.
 ## TODO
 
 - [ ] Export to `png`.
-- [ ] Clean-up of code.
+- [ ] man page.
 
 
 ## Donate
