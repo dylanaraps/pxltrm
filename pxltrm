@@ -54,7 +54,6 @@ save_file() {
 load_file() {
     clear_screen
     printf '\e[2;H%b\e[2;H' "$(<"$1")"
-    hist+="$_"
     status_line
 }
 
