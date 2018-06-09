@@ -48,7 +48,7 @@ status_line() {
 
 save_file() {
     local IFS=
-    printf '\e[2J\e[2;H%b\e[m\e[9999;H' "${history[*]}" > "${1:-/dev/null}"
+    printf '\e[2J\e[2;H%b\e[m\e[%s;H' "${history[*]}" "$((LINES-3))" > "${1:-:}"
 }
 
 load_file() {
