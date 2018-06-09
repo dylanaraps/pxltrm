@@ -39,13 +39,11 @@ status_line() {
     hud="${hud//\[/\[\\e[1m}"
     printf '\e[s\e[0;0H\e[0m%b' "${hud//\]/\\e[0m\]}"
 
-    printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D%b\e[1A\e[%sD%b\e[u' \
+    printf '\e[%s;0H\e[0m%b\e[0m, %b\e[0m\e[99999D\e[A%b\e[u' \
            "$((LINES-2))" \
            "[\\e[1mc\\e[0m]olor: ${print_col}${color}" \
            "[\\e[1mb\\e[0m]rush: \\e[1m${brush_char:=█}" \
-           "${padding}${status}" \
-           "$COLUMNS" \
-           "${padding}${status//▃/ }"
+           "${padding}${status//▃/ }\\n${padding}${status}"
 }
 
 save_file() {
