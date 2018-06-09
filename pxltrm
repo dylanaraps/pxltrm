@@ -48,7 +48,17 @@ status_line() {
 
 save_file() {
     local IFS=
-    printf '\e[2J\e[2;H%b\e[m\e[%s;H' "${hist[*]}" "$((LINES-3))" > "$1"
+    for ((i=1;i<LINES;i++)); do
+        for ((j=1;j<COLUMNS;j++)); do
+            [[ "${pos[${i}${j}]}" ]] && data+="${pos[${i}${j}]}" || data+=" "
+        done
+        line+=("$data")
+        unset data
+        [[ -z "${line[-1]//[[:space:]]}" ]] && unset 'line[-1]'
+    done
+
+    line=('\n' "${line[@]}" '\n\e[m')
+    printf '%b\n' "${line[@]}" > "$1"
 }
 
 load_file() {
@@ -89,6 +99,7 @@ paint() {
     IFS='[;' read -p $'\e[6n' -d R -rs _ y x
     printf '%b' "\\e[${y};${x}H${2}${1}\\b"
     hist+=("$_")
+    pos[${y}${x}]="${2}${1}"
 }
 
 prompt() {
