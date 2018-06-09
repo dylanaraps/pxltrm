@@ -87,8 +87,8 @@ prompt() {
         o) read -rp "load file: " file; [[ -f "$file" ]] && load_file "$file" ;;
         c) read -rp "input color: " color ;;
         b) read -rp "input brush: " brush_char ;;
-        x) read -rp "exit? [y/n]: "  y; [[ "$y" == y ]] && exit ;;
-        r) read -rp "clear screen? [y/n]: " y; [[ "$y" == y ]] && clear_screen ;;
+        x) read -n 1 -rp "exit? [y/n]: "  yn; [[ "$yn" == y ]] && exit ;;
+        r) read -n 1 -rp "clear? [y/n]: " yn; [[ "$yn" == y ]] && clear_screen ;;
     esac
 
     printf '\e[u'
