@@ -10,7 +10,8 @@ clear_screen() {
 get_term_size() {
     shopt -s checkwinsize; (:;:)
 
-    [[ -z "${LINES:+$COLUMNS}" ]] && read -r LINES COLUMNS < <(stty size)
+    [[ -z "${LINES:+$COLUMNS}" ]] && \
+        read -r LINES COLUMNS < <(stty size)
 }
 
 print_palette() {
@@ -52,9 +53,8 @@ save_file() {
 
 load_file() {
     clear_screen
-    file_data="$(<"$1")"
-    printf '%b' "\\e[2;0H${file_data}\\e[2;0H"
-    history+="$file_data"
+    printf '\e[2;H%b\e[2;H' "$(<"$1")"
+    history+="$_"
     status_line
 }
 
