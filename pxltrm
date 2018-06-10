@@ -48,12 +48,11 @@ status_line() {
 
 save_file() {
     local IFS=$'\n'
-    for ((i=1;i<LINES;i++)); do
+    for ((i=1;i<LINES;i++)); {
         for ((j=1;j<COLUMNS;j++));{ data+="${pos[$i$j]:- }"; }
         [[ "${data//[[:space:]]}" ]] && line+=("$data")
         unset data
-    done
-
+    }
     printf '\n%b\n\n\e[m' "${line[*]}" > "$1"
 }
 
