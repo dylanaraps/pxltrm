@@ -47,19 +47,18 @@ status_line() {
 }
 
 save_file() {
-    local IFS=$'\n'
     for ((i=1;i<LINES;i++)); {
-        for ((j=1;j<COLUMNS;j++));{ data+="${pos[$i$j]:- }"; }
-        [[ "${data//[[:space:]]}" ]] && line+=("$data")
-        unset data
+        for ((j=1;j<COLUMNS;j++));{ data[$i]+="${pos[$i$j]:- }"; }
+        [[ "${data[$i]}" ]] && line+=("${data[$i]}")
     }
-    printf '\n%b\n\n\e[m' "${line[*]}" > "$1"
+    local IFS=$'\n'
+    printf '%b\e[m\e[9999D' "${line[*]}" > "$1"
 }
 
 load_file() {
     clear_screen
     printf '\e[2;H%b\e[2;H' "$(<"$1")"
-    hist+=("$_")
+    pos[11]="$_"
     status_line
 }
 
@@ -85,9 +84,9 @@ print_color() {
     case "${color:=7}" in
         "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
         [0-9]*):           "\\e[38;5;${color}m" ;;
-        *):                "\\e[38;5;7m"
+        *):                "\\e[m" ;;
     esac
-    printf -v print_col '%b' "\\e[1m${_}"
+    printf -v print_col '%b' "$_"
 }
 
 paint() {
