@@ -47,18 +47,16 @@ status_line() {
 }
 
 save_file() {
-    for ((i=1;i<LINES;i++)); {
-        for ((j=1;j<COLUMNS;j++));{ data[$i]+="${pos[$i$j]:- }"; }
-        [[ "${data[$i]//[[:space:]]}" ]]&&line+=("${data[$i]} ")||line+=( )
-    }
-    local IFS=
-    printf '%b\n' "${line[*]}" > "$1"
+    for((j=0;++j<LINES;));{ for((k=0;++k<COLUMNS;));{ l[$j]+="${p[$j$k]:- }";};}
+    local IFS=$'\n'
+    [[ "${l[*]}" =~ ^[[:space:]]*(.*[^[:space:]])[[:space:]]*$ ]]
+    printf '\n%b\e[m\n\n' "${BASH_REMATCH[1]}" > "$1"
 }
 
 load_file() {
     clear_screen
-    printf '\e[2;H%b\e[2;H' "$(<"$1")"
-    pos[11]="$_"
+    printf '\e[2;H%b\e[1;H' "$(<"$1")"
+    p[11]="$_"
     status_line
 }
 
@@ -89,11 +87,15 @@ print_color() {
     printf -v print_col '%b' "$_"
 }
 
-paint() {
+get_pos() {
     IFS='[;' read -p $'\e[6n' -d R -rs _ y x
+}
+
+paint() {
+    get_pos
     printf '%b' "\\e[${y};${x}H${2}${1}\\b"
     hist+=("$_")
-    pos["${y}${x}"]="${2}${1}"
+    p["${y}${x}"]="${2}${1}"
 }
 
 prompt() {
@@ -114,12 +116,12 @@ prompt() {
 
 cursor() {
     case "${1: -1}" in
-        A|k) printf '\e[A' ;;
-        B|j) printf '\e[B' ;;
-        C|l) printf '\e[C' ;;
+        A|k) get_pos; ((y>2))         && printf '\e[A' ;;
+        B|j) get_pos; ((y<LINES-4))   && printf '\e[B' ;;
+        C|l) get_pos; ((x<COLUMNS-1)) && printf '\e[C' ;;
         D|h) printf '\e[D' ;;
         H)   printf '\e[999999D' ;;
-        L)   printf '\e[999999C' ;;
+        L)   printf '\e[999999C\e[D' ;;
 
         [1-8]) color="${1: -1}";  status_line ;;
 
