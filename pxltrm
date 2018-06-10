@@ -80,7 +80,7 @@ print_color() {
     case "${color:=7}" in
         "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
         [0-9]*):           "\\e[38;5;${color}m" ;;
-        *):                "\\e[38;5;7m"
+        *):                "\\e[39m"
     esac
     printf -v print_col '%b' "\\e[1m${_}"
 }
