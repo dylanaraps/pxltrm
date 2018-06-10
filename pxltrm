@@ -31,8 +31,8 @@ status_line() {
     printf -v block_width "%$((COLUMNS / 24))s"
     printf -v padding '\e[%bC' "$((COLUMNS - COLUMNS / 3))"
 
-    print_palette
     print_color
+    print_palette
 
     hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo"
     hud="${hud::$COLUMNS}"
