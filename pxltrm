@@ -49,10 +49,10 @@ status_line() {
 save_file() {
     for ((i=1;i<LINES;i++)); {
         for ((j=1;j<COLUMNS;j++));{ data[$i]+="${pos[$i$j]:- }"; }
-        [[ "${data[$i]}" ]] && line+=("${data[$i]}")
+        [[ "${data[$i]//[[:space:]]}" ]]&&line+=("${data[$i]} ")||line+=( )
     }
-    local IFS=$'\n'
-    printf '%b\e[m\e[9999D' "${line[*]}" > "$1"
+    local IFS=
+    printf '%b\n' "${line[*]}" > "$1"
 }
 
 load_file() {
@@ -84,7 +84,7 @@ print_color() {
     case "${color:=7}" in
         "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
         [0-9]*):           "\\e[38;5;${color}m" ;;
-        *):                "\\e[m" ;;
+        *):                "\\e[38;5;7m" ;;
     esac
     printf -v print_col '%b' "$_"
 }
