@@ -86,7 +86,7 @@ print_color() {
         [0-9]*):           "\\e[38;5;${color}m" ;;
         *):                "\\e[38;5;7m" ;;
     esac
-    printf -v print_col '%b' "\\e[1m${_}"
+    printf -v print_col '%b' "$_"
 }
 
 paint() {
