@@ -47,10 +47,15 @@ status_line() {
 }
 
 save_file() {
-    for((j=0;++j<LINES;));{ for((k=0;++k<COLUMNS;));{ l[$j]+="${p[$j$k]:- }";};}
+    for((j=2;j<=LINES-3;j++));{
+        for((k=0;k<COLUMNS;k++));{
+            l[$j]+="${p[$j$k]:= }"
+        }
+    }
+
     local IFS=$'\n'
-    [[ "${l[*]}" =~ ^[[:space:]]*(.*[^[:space:]])[[:space:]]*$ ]]
-    printf '\n%b\e[m\n\n' "${BASH_REMATCH[1]}" > "$1"
+    [[ "\\n${l[*]}" =~ ^[[:space:]]*(.*[^[:space:]])[[:space:]]*$ ]]
+    printf '%b\n\n\e[m' "${BASH_REMATCH[1]}" > "$1"
 }
 
 load_file() {
@@ -88,7 +93,7 @@ print_color() {
 }
 
 get_pos() {
-    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
+    IFS='[;' read -p $'\e[6n' -d R -rs _ y x _
 }
 
 paint() {
