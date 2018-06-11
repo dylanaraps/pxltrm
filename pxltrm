@@ -93,9 +93,9 @@ get_pos() {
 
 paint() {
     get_pos
+    p["${y}${x}"]="${2}${1}"
     printf '%b' "\\e[${y};${x}H${2}${1}\\b"
     hist+=("$_")
-    p["${y}${x}"]="${2}${1}"
 }
 
 prompt() {
