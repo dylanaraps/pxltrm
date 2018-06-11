@@ -76,17 +76,21 @@ hex_to_rgb() {
     ((b=16#${color:5:6}))
 }
 
+get_pos() {
+    IFS='[;' read -p $'\e[6n' -d R -rs _ y x _
+}
+
 print_color() {
     case "${color:=7}" in
         "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
         [0-9]*):           "\\e[38;5;${color}m" ;;
-        *):                "\\e[39m"
+        *):                "\\e[38;5;7m" ;;
     esac
     printf -v print_col '%b' "\\e[1m${_}"
 }
 
 paint() {
-    IFS='[;' read -p $'\e[6n' -d R -rs _ y x
+    get_pos
     printf '%b' "\\e[${y};${x}H${2}${1}\\b"
     hist+=("$_")
 }
@@ -109,12 +113,12 @@ prompt() {
 
 cursor() {
     case "${1: -1}" in
-        A|k) printf '\e[A' ;;
-        B|j) printf '\e[B' ;;
-        C|l) printf '\e[C' ;;
+        A|k) get_pos; ((y>2))         && printf '\e[A' ;;
+        B|j) get_pos; ((y<LINES-4))   && printf '\e[B' ;;
+        C|l) get_pos; ((x<COLUMNS-1)) && printf '\e[C' ;;
         D|h) printf '\e[D' ;;
         H)   printf '\e[999999D' ;;
-        L)   printf '\e[999999C' ;;
+        L)   printf '\e[999999C\e[D' ;;
 
         [1-8]) color="${1: -1}";  status_line ;;
 
