@@ -34,7 +34,7 @@ status_line() {
     print_color
     print_palette
 
-    hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo"
+    hud="[d]raw, [e]rase, cle[a]r, [u]ndo, [r]edo, [s]ave, [o]pen, e[x]port"
     hud="${hud::$COLUMNS}"
     hud="${hud//\[/\[\\e[1m}"
     printf '\e[s\e[;H\e[m%b' "${hud//\]/\\e[m\]}"
@@ -46,7 +46,7 @@ status_line() {
            "${padding}${status//▃/ }\\n${padding}${status}"
 }
 
-save_file() {
+export_file() {
     for((i=2;i<LINES-4;i++)); {
         for((j=1;j<COLUMNS;j++)); {
            printf '%b' "${p[${i}00000${j}]:- }"
@@ -54,6 +54,11 @@ save_file() {
         printf '\n'
     }
     printf '\e[m'
+}
+
+save_file() {
+    local IFS=
+    printf '\e[2J\e[2;H%b\e[m\e[%s;H' "${hist[*]}" "$((LINES-3))"
 }
 
 load_file() {
@@ -105,11 +110,12 @@ prompt() {
     printf '\e[s\e[%s;H\e[m' "$((LINES-1))"
 
     case "$1" in
-        s) read -rp "save file: " file; save_file > "${file:-/dev/null}" ;;
-        o) read -rp "load file: " file; [[ -f "$file" ]] && load_file "$file" ;;
+        s) read -rp "save file: " f; save_file > "${f:-/dev/null}.pxl" ;;
+        o) read -rp "load file: " f; [[ -f "$f" ]] && load_file "$f" ;;
         c) read -rp "input color: " color ;;
         b) read -rp "input brush: " brush_char ;;
         a) read -n 1 -rp "clear? [y/n]: " y; [[ "$y" == y ]] && clear_screen ;;
+        x) read -rp "export file: " f; export_file > "${f:-/dev/null}" ;;
     esac
 
     printf '\e[u'
@@ -133,7 +139,7 @@ cursor() {
         u) (("${#hist}">0))  && undo; status_line ;;
         r) (("${#undos}">1)) && redo; status_line ;;
 
-        a|b|c|o|s) prompt "${1: -1}" ;;
+        a|b|c|o|s|x) prompt "${1: -1}" ;;
     esac
 }
 
