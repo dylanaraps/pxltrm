@@ -48,18 +48,18 @@ status_line() {
 
 save_file() {
     for((i=2;i<LINES-4;i++)); {
-        for((j=0;j<COLUMNS;j++)); {
+        for((j=1;j<COLUMNS;j++)); {
            printf '%b' "${p[${i}00000${j}]:- }"
         }
         printf '\n'
     }
+    printf '\e[m'
 }
 
 load_file() {
     clear_screen
-    IFS=$'\n' read -d "" -ra file_data < "$1"
-    for i in "${!file_data[@]}"; do p["$i"000001]="${file_data[$i]}"; done
-    printf '%b\n' "${file_data[@]}"
+    printf '\e[2;H%b\e[2;H' "$(<"$1")"
+    hist+=("$_")
     status_line
 }
 
