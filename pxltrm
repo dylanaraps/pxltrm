@@ -41,7 +41,7 @@ status_line() {
 
     printf '\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
            "$((LINES-2))" \
-           "[\\e[1mc\\e[m]olor: ${print_col}${color}" \
+           "[\\e[1mc\\e[m]olor: \\e[1m${print_col}${color}" \
            "[\\e[1mb\\e[m]rush: \\e[1m${brush_char:=█}" \
            "${padding}${status//▃/ }\\n${padding}${status}"
 }
