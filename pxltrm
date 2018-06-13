@@ -49,12 +49,15 @@ status_line() {
 }
 
 export_file() {
+    local line
+
     for((i=2;i<LINES-4;i++)); {
         for((j=1;j<COLUMNS;j++)); {
            line+="${p[${i}00000${j}]:- }"
         }
         line+='\n'
     }
+
     convert -background white \
             -undercolor white \
             -font Monospace \
@@ -136,7 +139,7 @@ prompt() {
 cursor() {
     case "${1: -1}" in
         A|k) get_pos; ((y>2))         && printf '\e[A' ;;
-        B|j) get_pos; ((y<LINES-4))   && printf '\e[B' ;;
+        B|j) get_pos; ((y<LINES-5))   && printf '\e[B' ;;
         C|l) get_pos; ((x<COLUMNS-1)) && printf '\e[C' ;;
         D|h) printf '\e[D' ;;
         H)   printf '\e[999999D' ;;
