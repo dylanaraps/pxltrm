@@ -13,9 +13,7 @@ status_line_clean() {
 
 get_term_size() {
     shopt -s checkwinsize; (:;:)
-
-    [[ -z "${LINES:+$COLUMNS}" ]] && \
-        read -r LINES COLUMNS < <(stty size)
+    [[ -z "${LINES:+$COLUMNS}" ]] && read -r LINES COLUMNS < <(stty size)
 }
 
 print_palette() {
@@ -37,9 +35,9 @@ status_line() {
     hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo"
     hud="${hud::$COLUMNS}"
     hud="${hud//\[/[\\e[1m}"
-    printf '\e[s\e[;H\e[m%b' "${hud//\]/\\e[m\]}"
 
-    printf '\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
+    printf '\e[s\e[;H\e[m%b\e[K\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
+           "${hud//\]/\\e[m\]}" \
            "$((LINES-2))" \
            "[\\e[1mc\\e[m]olor: \\e[1m${print_col}${color}" \
            "[\\e[1mb\\e[m]rush: \\e[1m${brush_char:=█}" \
@@ -81,7 +79,7 @@ print_color() {
     case "${color:=7}" in
         "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
         [0-9]*):           "\\e[38;5;${color}m" ;;
-        *):                "\\e[38;5;7m" ;;
+        *) color="7";:     "\\e[38;5;7m" ;;
     esac
     printf -v print_col '%b' "$_"
 }
