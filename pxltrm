@@ -36,7 +36,7 @@ status_line() {
     hud="${hud::$COLUMNS}"
     hud="${hud//\[/[\\e[1m}"
 
-    printf '\e[s\e[;H\e[m%b\e[K\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
+    printf '\e[s\e[;H\e[2K\e[m%b\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
            "${hud//\]/\\e[m\]}" \
            "$((LINES-2))" \
            "[\\e[1mc\\e[m]olor: \\e[1m${print_col}${color}" \
