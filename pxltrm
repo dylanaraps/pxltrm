@@ -36,7 +36,7 @@ status_line() {
 
     hud="[d]raw, [e]rase, cle[a]r, [s]ave, [o]pen, [u]ndo, [r]edo"
     hud="${hud::$COLUMNS}"
-    hud="${hud//\[/\[\\e[1m}"
+    hud="${hud//\[/[\\e[1m}"
     printf '\e[s\e[;H\e[m%b' "${hud//\]/\\e[m\]}"
 
     printf '\e[%s;H\e[m%b\e[m, %b\e[m\e[99999D\e[A%b\e[u' \
@@ -70,9 +70,7 @@ redo() {
 }
 
 hex_to_rgb() {
-    ((r=16#${color:1:2}))
-    ((g=16#${color:3:2}))
-    ((b=16#${color:5:6}))
+    ((r=16#${color:1:2},g=16#${color:3:2},b=16#${color:5:6}))
 }
 
 get_pos() {
