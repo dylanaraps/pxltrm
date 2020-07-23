@@ -51,8 +51,9 @@ save_file() {
 
 load_file() {
     clear_screen
-    printf '\e[2;H%b\e[2;H' "$(<"$1")"
-    hist+=("$_")
+    local s="$(<"$1")"
+    printf '\e[2;H%b\e[2;H' "$s"
+    hist+=("$s")
 }
 
 undo() {
@@ -76,18 +77,20 @@ get_pos() {
 }
 
 print_color() {
+    local s
     case "${color:=7}" in
-        "#"*) hex_to_rgb;: "\\e[38;2;${r};${g};${b}m" ;;
-        [0-9]*):           "\\e[38;5;${color}m" ;;
-        *) color="7";:     "\\e[38;5;7m" ;;
+        "#"*) hex_to_rgb; s="\\e[38;2;${r};${g};${b}m" ;;
+        [0-9]*)           s="\\e[38;5;${color}m" ;;
+        *) color="7";     s="\\e[38;5;7m" ;;
     esac
-    printf -v print_col '%b' "$_"
+    printf -v print_col '%b' "$s"
 }
 
 paint() {
     get_pos
-    printf '%b' "\\e[${y};${x}H${2}${1}\\b"
-    hist+=("$_")
+    local s="\\e[${y};${x}H${2}${1}\\b"
+    printf '%b' "$s"
+    hist+=("$s")
 }
 
 prompt() {
@@ -119,14 +122,15 @@ cursor() {
 
         e) paint " " ;;
         d) print_color; paint "${brush_char:=█}" "$print_col" ;;
-        u) (("${#hist}">0))  && undo; status_line ;;
-        r) (("${#undos}">1)) && redo; status_line ;;
+        u) (("${#hist[0]}">0))  && undo; status_line ;;
+        r) (("${#undos[0]}">1)) && redo; status_line ;;
 
         a|b|c|o|s) prompt "${1: -1}" ;;
     esac
 }
 
 main() {
+    shopt -s eval_unsafe_arith 2>/dev/null
     clear_screen
     get_term_size
     status_line
